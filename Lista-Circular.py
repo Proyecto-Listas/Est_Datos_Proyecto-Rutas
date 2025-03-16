@@ -159,10 +159,9 @@ class LCSE:
                 actual = actual.siguiente
                 actual_siguiente_atributo=getattr(actual.siguiente,criterio)
 
-            # Insertar el nodo en la posición adecuada
-            nuevo_nodo.siguiente = actual.siguiente
-            actual.siguiente = nuevo_nodo
-
+        # Insertar el nodo en la posición adecuada
+        nuevo_nodo.siguiente = actual.siguiente
+        actual.siguiente = nuevo_nodo
         return ordenada
     
     
@@ -190,7 +189,7 @@ class Demo ():
         print("ordenda por valor_mercancia")
         lista.imprimirLista()
 
-        lista.insertionSort("coordenas")
+        lista.insertionSort("coordenadas")
         print("ordenda por distancia")
         lista.imprimirLista()
 
@@ -202,6 +201,9 @@ class Demo ():
             x_coords, y_coords, id = [], [], []
             actual = ruta.cabeza
             i=0
+            x_coords.append(lista.base_coordenadas[0])
+            y_coords.append(lista.base_coordenadas[1])
+            id.append("base")
             while actual !=ruta.cabeza or i==0:
                 i=i+1
                 x_coords.append(actual.coordenadas[0])
