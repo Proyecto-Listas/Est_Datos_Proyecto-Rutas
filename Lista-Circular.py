@@ -82,7 +82,7 @@ class LCSE:
                     actual = actual.siguiente
                 print("Elemento no encontrado")
             else:
-                print("criterio de búsqueda inválido, sólo se admiten 'id','peso','cantidad_paquetes','valor_mercancia' o 'coordenadas'")
+                print("criterio de busqueda invalido, solo se admiten 'id','peso','cantidad_paquetes','valor_mercancia' o 'coordenadas'")
             
             return -1 
                 
@@ -115,7 +115,7 @@ class LCSE:
                 actual = actual.siguiente
             self.cola = actual
         else:
-            print("criterio de búsqueda inválido, sólo se admiten 'id','peso','cantidad_paquetes','valor_mercancia' o 'coordenadas'")
+            print("criterio de busqueda invalido, solo se admiten 'id','peso','cantidad_paquetes','valor_mercancia' o 'coordenadas'")
             
 
     def insertarOrdenado(self, ordenada, nuevo_nodo, criterio):
@@ -202,7 +202,7 @@ class Demo ():
             i=0
             x_coords.append(lista.base_coordenadas[0])
             y_coords.append(lista.base_coordenadas[1])
-            id.append("base")
+            id.append("BASE")
             while actual !=ruta.cabeza or i==0:
                 i=i+1
                 x_coords.append(actual.coordenadas[0])
@@ -214,7 +214,7 @@ class Demo ():
             plt.plot(x_coords, y_coords, marker='o', linestyle='-', color='b')
             for i, label in enumerate(id):
                 plt.annotate(f"{label}", (x_coords[i], y_coords[i]), textcoords="offset points", xytext=(0,10), ha='center')
-            plt.title("Visualización de la Ruta")
+            plt.title("Visualizacion de la Ruta")
             plt.xlabel("Coordenada X")
             plt.ylabel("Coordenada Y")
             plt.grid(True)
