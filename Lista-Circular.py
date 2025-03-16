@@ -1,3 +1,4 @@
+import math, random
 class Nodo:
     def __init__(self,data):
         self.data = data
@@ -149,24 +150,26 @@ class LCSE:
     
     
 
-lista = LCSE()
+class Demo ():
+    def __init__(self):
+        print("test")
+    def test():
+        lista = LCSE()
+        i = 0
+        while i<15:
+            i=i+1
+            lista.agregarInicio(random.randint(0,100),random.randint(0,100),random.randint(0,5),random.randint(0,200000),(random.randint(-20,20),random.randint(-20,20)))
+        lista.ContarElementos()
+        lista.imprimirLista()
+        lista.insertionSort("data")
+        print("ordenda por data")
+        lista.imprimirLista()
 
-lista.agregarInicio(1,11,111,9999,(1,1))
-lista.agregarInicio(4,44,444,5555,(4,4))
-lista.agregarInicio(3,33,333,6666,(3,3))
-lista.agregarInicio(2,22,222,7777,(2,2))
+        lista.insertionSort("valor_mercancia")
+        print("ordenda por valor_mercancia")
+        lista.imprimirLista()
 
-lista.ContarElementos()
-lista.imprimirLista()
-lista.insertionSort("data")
-print("ordenda por data")
-lista.imprimirLista()
-
-lista.insertionSort("valor_mercancia")
-print("ordenda por valor_mercancia")
-lista.imprimirLista()
-
-lista.buscar(3,"data")
-lista.buscar((2,2),"coordenadas")
+        lista.buscar(3,"data")
+        lista.buscar((2,2),"coordenadas")
                 
-    
+Demo.test()
