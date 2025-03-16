@@ -1,17 +1,17 @@
 import math, random
 import matplotlib.pyplot as plt
 class Nodo:
-    def __init__(self,peso):
+    def __init__(self,peso,id,cantidad_paquetes,valor_mercancia,coordenadas,nombre):
         self.peso = peso
-        self.siguiente = None
-
-    def __init__(self,peso,id,cantidad_paquetes,valor_mercancia,coordenadas):
-        self.peso = peso
+        self.nombre = nombre
         self.id = id
         self.cantidad_paquetes = cantidad_paquetes
         self.valor_mercancia = valor_mercancia
         self.coordenadas = coordenadas
         self.siguiente = None
+
+    def toString(self):
+        return f"{self.id:3} | {self.nombre:20} | {self.peso:9} | {self.cantidad_paquetes:8} | {self.valor_mercancia:6}"
         
 class LCSE:
     def __init__(self):
@@ -26,8 +26,8 @@ class LCSE:
         else:
             return False
             
-    def agregarInicio(self,peso,id=None,cantidad_paquetes=None,valor_mercancia=None,coordenadas=None):
-        nuevo_Nodo = Nodo(peso,id,cantidad_paquetes,valor_mercancia,coordenadas)
+    def agregarInicio(self,peso,id=None,cantidad_paquetes=None,valor_mercancia=None,coordenadas=None,nombre=None):
+        nuevo_Nodo = Nodo(peso,id,cantidad_paquetes,valor_mercancia,coordenadas,nombre)
         if self.validarVacia():
             nuevo_Nodo.siguiente = nuevo_Nodo
             self.cabeza = nuevo_Nodo
@@ -40,7 +40,7 @@ class LCSE:
     
     def ContarElementos(self):
         if self.validarVacia():
-            print("Lista Vacia")
+            print("No hay ruta establecida")
             return
         else:
             contador = 1
@@ -50,23 +50,22 @@ class LCSE:
                     break
                 actual = actual.siguiente
                 contador += 1
-            print (f"Lista tiene {contador} elementos")
+            print (f"La ruta contiene {contador} paradas\n")
     
-    def imprimirLista(self):
+    def toString(self):
         if self.validarVacia():
-            print("Lista Vacia")
-            return
-        else:
-            actual = self.cabeza
-            while True:
-                print(f"peso:{actual.peso}, id:{actual.id}, cantidad_paquetes:{actual.cantidad_paquetes}, valor_mercancia:{actual.valor_mercancia}, coordenadas:{actual.coordenadas}")
-                if actual.siguiente == self.cabeza:
-                    break
-                actual = actual.siguiente
+            return "No hay ruta establecida"
+        temp = self.cabeza
+        string = " ID | Nombre               | Peso (kg) | Paquetes |  Valor"
+        while( True ):
+            string = string + "\n" + temp.toString()
+            if temp.siguiente == self.cabeza:
+                return string
+            temp = temp.siguiente
     
     def buscar(self,valor,criterio):
         if self.validarVacia():
-            print("Lista vacia")
+            print("No hay ruta establecida")
             return
         else:
             if (criterio=="peso" or criterio == "id" or criterio == "cantidad_paquetes" or criterio =="valor_mercancia" or criterio=="coordenadas"):
@@ -175,23 +174,23 @@ class Demo ():
     def test():
         lista = LCSE()
         i = 0
-        print("El programa recibe una lista de 25 ubicaciones las almacena en una lista ")
+        print("El programa crea un sistema de rutas con 15 entradas de prueba totalmente aleatorias\n")
         while i<15:
             i=i+1
-            lista.agregarInicio(random.randint(0,10),random.randint(0,1000),random.randint(0,5),random.randint(0,200000),(random.randint(-20,20),random.randint(-20,20)))
+            lista.agregarInicio(random.randint(0,10),random.randint(0,1000),random.randint(0,5),random.randint(0,200000),(random.randint(-20,20),random.randint(-20,20)),f"Farmacia{i}")
         lista.ContarElementos()
-        lista.imprimirLista()
+        print(lista.toString())
         lista.insertionSort("peso")
-        print("ordenda por peso")
-        lista.imprimirLista()
+        print("\nRuta ordenada por peso\n")
+        print(lista.toString())
 
         lista.insertionSort("valor_mercancia")
-        print("ordenda por valor_mercancia")
-        lista.imprimirLista()
+        print("\nRuta ordenada por el valor de la mercancia\n")
+        print(lista.toString())
 
         lista.insertionSort("coordenadas")
-        print("ordenda por distancia")
-        lista.imprimirLista()
+        print("\nRuta ordenada por distancia\n")
+        print(lista.toString())
 
 
         lista.buscar(3,"peso")
@@ -224,5 +223,3 @@ class Demo ():
         visualizarRuta(lista)
                 
 Demo.test()
-
-# Función para visualizar la ruta en un mapa
