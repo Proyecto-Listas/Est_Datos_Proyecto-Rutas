@@ -2,11 +2,21 @@ class Nodo:
     def __init__(self,data):
         self.data = data
         self.siguiente = None
+
+    def __init__(self,data,id,cantidad_paquetes,valor_mercancia,coordenadas):
+        self.data = data
+        self.id = id
+        self.cantidad_paquetes = cantidad_paquetes
+        self.valor_mercancia = valor_mercancia
+        self.coordenadas = coordenadas
+        self.siguiente = None
         
 class LCSE:
     def __init__(self):
         self.cabeza = None
-        self.cola = None    
+        self.cola = None
+        self.base_coordenadas = (0,0)
+
         
     def validarVacia(self):
         if self.cabeza == None:
@@ -14,12 +24,12 @@ class LCSE:
         else:
             return False
             
-    def aggInicio(self,data):
-        nuevo_Nodo = Nodo(data)
+    def agregarInicio(self,data,id=None,cantidad_paquetes=None,valor_mercancia=None,coordenadas=None):
+        nuevo_Nodo = Nodo(data,id,cantidad_paquetes,valor_mercancia,coordenadas)
         if self.validarVacia():
             nuevo_Nodo.siguiente = nuevo_Nodo
             self.cabeza = nuevo_Nodo
-            self.cola = nuevo_Nodo              #No se si quitar cola, opiniones?
+            self.cola = nuevo_Nodo            
             return
         else:
             nuevo_Nodo.siguiente = self.cabeza
@@ -47,23 +57,33 @@ class LCSE:
         else:
             actual = self.cabeza
             while True:
-                print(actual.data)
+                print(f"data:{actual.data}, id:{actual.id}, cantidad_paquetes:{actual.cantidad_paquetes}, vavlor_paquete:{actual.valor_mercancia}, coordenadas:{actual.coordenadas}")
                 if actual.siguiente == self.cabeza:
                     break
                 actual = actual.siguiente
     
-    def Buscar(self,valor):
+    def buscar(self,valor,criterio):
         if self.validarVacia():
             print("Lista vacia")
             return
         else:
-            actual = self.cabeza
-            while actual.siguiente != self.cabeza:
-                if actual.data == valor:
-                    print("Elemento Encontrado")
-                    return
-                actual = actual.siguiente
-            print("Elemento no encontrado")  
+            if (criterio=="data" or criterio == "id" or criterio == "cantidad_paquetes" or criterio =="valor_mercancia" or criterio=="coordenadas"):
+                actual = self.cabeza
+                
+                contador = 0
+                while actual != self.cabeza or contador==0:
+
+                    contador=contador+1
+                    atributo=getattr(actual,criterio)
+                    if atributo == valor:
+                        print(f"Elemento Encontrado en posicion {contador}")
+                        return contador
+                    actual = actual.siguiente
+                print("Elemento no encontrado")
+            else:
+                print("criterio de búsqueda inválido, sólo se admiten 'id','data','cantidad_paquetes','valor_mercancia' o 'coordenadas'")
+            
+            return -1 
                 
 
     def insertionSort(self):
@@ -123,14 +143,15 @@ class LCSE:
 
 lista = LCSE()
 
-lista.aggInicio(10)
-lista.aggInicio(40)
-lista.aggInicio(30)
-lista.aggInicio(20)
+lista.agregarInicio(1,11,111,1111,(1,1))
+lista.agregarInicio(4,44,444,4444,(4,4))
+lista.agregarInicio(3,33,333,3333,(3,3))
+lista.agregarInicio(2,22,222,2222,(2,2))
 
 lista.ContarElementos()
 lista.insertionSort()
 lista.imprimirLista()
-lista.Buscar(10)
+lista.buscar(3,"data")
+lista.buscar((2,2),"coordenadas")
                 
     
