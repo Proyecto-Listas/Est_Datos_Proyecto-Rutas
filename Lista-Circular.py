@@ -1,12 +1,12 @@
 import math, random
 import matplotlib.pyplot as plt
 class Nodo:
-    def __init__(self,data):
-        self.data = data
+    def __init__(self,peso):
+        self.peso = peso
         self.siguiente = None
 
-    def __init__(self,data,id,cantidad_paquetes,valor_mercancia,coordenadas):
-        self.data = data
+    def __init__(self,peso,id,cantidad_paquetes,valor_mercancia,coordenadas):
+        self.peso = peso
         self.id = id
         self.cantidad_paquetes = cantidad_paquetes
         self.valor_mercancia = valor_mercancia
@@ -26,8 +26,8 @@ class LCSE:
         else:
             return False
             
-    def agregarInicio(self,data,id=None,cantidad_paquetes=None,valor_mercancia=None,coordenadas=None):
-        nuevo_Nodo = Nodo(data,id,cantidad_paquetes,valor_mercancia,coordenadas)
+    def agregarInicio(self,peso,id=None,cantidad_paquetes=None,valor_mercancia=None,coordenadas=None):
+        nuevo_Nodo = Nodo(peso,id,cantidad_paquetes,valor_mercancia,coordenadas)
         if self.validarVacia():
             nuevo_Nodo.siguiente = nuevo_Nodo
             self.cabeza = nuevo_Nodo
@@ -59,7 +59,7 @@ class LCSE:
         else:
             actual = self.cabeza
             while True:
-                print(f"data:{actual.data}, id:{actual.id}, cantidad_paquetes:{actual.cantidad_paquetes}, valor_mercancia:{actual.valor_mercancia}, coordenadas:{actual.coordenadas}")
+                print(f"peso:{actual.peso}, id:{actual.id}, cantidad_paquetes:{actual.cantidad_paquetes}, valor_mercancia:{actual.valor_mercancia}, coordenadas:{actual.coordenadas}")
                 if actual.siguiente == self.cabeza:
                     break
                 actual = actual.siguiente
@@ -69,7 +69,7 @@ class LCSE:
             print("Lista vacia")
             return
         else:
-            if (criterio=="data" or criterio == "id" or criterio == "cantidad_paquetes" or criterio =="valor_mercancia" or criterio=="coordenadas"):
+            if (criterio=="peso" or criterio == "id" or criterio == "cantidad_paquetes" or criterio =="valor_mercancia" or criterio=="coordenadas"):
                 actual = self.cabeza
                 
                 contador = 0
@@ -83,7 +83,7 @@ class LCSE:
                     actual = actual.siguiente
                 print("Elemento no encontrado")
             else:
-                print("criterio de búsqueda inválido, sólo se admiten 'id','data','cantidad_paquetes','valor_mercancia' o 'coordenadas'")
+                print("criterio de búsqueda inválido, sólo se admiten 'id','peso','cantidad_paquetes','valor_mercancia' o 'coordenadas'")
             
             return -1 
                 
@@ -91,7 +91,7 @@ class LCSE:
     def insertionSort(self,criterio,ascendente=True):
         if self.validarVacia() or self.cabeza.siguiente == self.cabeza:
             return  # Si la lista está vacía o tiene un solo elemento, no es necesario ordenar
-        if (criterio=="data" or criterio == "id" or criterio == "cantidad_paquetes" or criterio =="valor_mercancia" or criterio=="coordenadas"):
+        if (criterio=="peso" or criterio == "id" or criterio == "cantidad_paquetes" or criterio =="valor_mercancia" or criterio=="coordenadas"):
 
             ordenada = None  # La nueva lista ordenada
 
@@ -116,7 +116,7 @@ class LCSE:
                 actual = actual.siguiente
             self.cola = actual
         else:
-            print("criterio de búsqueda inválido, sólo se admiten 'id','data','cantidad_paquetes','valor_mercancia' o 'coordenadas'")
+            print("criterio de búsqueda inválido, sólo se admiten 'id','peso','cantidad_paquetes','valor_mercancia' o 'coordenadas'")
             
 
     def insertarOrdenado(self, ordenada, nuevo_nodo, criterio):
@@ -178,11 +178,11 @@ class Demo ():
         print("El programa recibe una lista de 25 ubicaciones las almacena en una lista ")
         while i<15:
             i=i+1
-            lista.agregarInicio(random.randint(0,100),random.randint(0,100),random.randint(0,5),random.randint(0,200000),(random.randint(-20,20),random.randint(-20,20)))
+            lista.agregarInicio(random.randint(0,10),random.randint(0,1000),random.randint(0,5),random.randint(0,200000),(random.randint(-20,20),random.randint(-20,20)))
         lista.ContarElementos()
         lista.imprimirLista()
-        lista.insertionSort("data")
-        print("ordenda por data")
+        lista.insertionSort("peso")
+        print("ordenda por peso")
         lista.imprimirLista()
 
         lista.insertionSort("valor_mercancia")
@@ -194,7 +194,7 @@ class Demo ():
         lista.imprimirLista()
 
 
-        lista.buscar(3,"data")
+        lista.buscar(3,"peso")
         lista.buscar((2,2),"coordenadas")
 
         def visualizarRuta(ruta):
