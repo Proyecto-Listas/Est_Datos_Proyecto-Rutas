@@ -86,34 +86,38 @@ class LCSE:
             return -1 
                 
 
-    def insertionSort(self):
+    def insertionSort(self,criterio):
         if self.validarVacia() or self.cabeza.siguiente == self.cabeza:
             return  # Si la lista está vacía o tiene un solo elemento, no es necesario ordenar
-        
-        ordenada = None  # La nueva lista ordenada
+        if (criterio=="data" or criterio == "id" or criterio == "cantidad_paquetes" or criterio =="valor_mercancia" or criterio=="coordenadas"):
 
-        actual = self.cabeza
-        while True:
-            siguiente = actual.siguiente
-            if ordenada is None:  # Si la lista ordenada está vacía, insertar el primer nodo
-                ordenada = actual
-                ordenada.siguiente = ordenada  
-            else:
-                # Insertar el nodo en su posición correcta en la lista ordenada
-                ordenada = self.insertarOrdenado(ordenada, actual)
+            ordenada = None  # La nueva lista ordenada
+
+            actual = self.cabeza
+            while True:
+                siguiente = actual.siguiente
+                if ordenada is None:  # Si la lista ordenada está vacía, insertar el primer nodo
+                    ordenada = actual
+                    ordenada.siguiente = ordenada  
+                else:
+                    # Insertar el nodo en su posición correcta en la lista ordenada
+                    ordenada = self.insertarOrdenado(ordenada, actual,criterio)
+                
+                actual = siguiente
+                if actual == self.cabeza:
+                    break
+
+            # Establecer la cabeza y la cola de la lista ordenada
+            self.cabeza = ordenada
+            actual = self.cabeza
+            while actual.siguiente != self.cabeza:
+                actual = actual.siguiente
+            self.cola = actual
+        else:
+                print("criterio de búsqueda inválido, sólo se admiten 'id','data','cantidad_paquetes','valor_mercancia' o 'coordenadas'")
             
-            actual = siguiente
-            if actual == self.cabeza:
-                break
 
-        # Establecer la cabeza y la cola de la lista ordenada
-        self.cabeza = ordenada
-        actual = self.cabeza
-        while actual.siguiente != self.cabeza:
-            actual = actual.siguiente
-        self.cola = actual
-
-    def insertarOrdenado(self, ordenada, nuevo_nodo):
+    def insertarOrdenado(self, ordenada, nuevo_nodo, criterio):
         if ordenada is None:
             nuevo_nodo.siguiente = nuevo_nodo
             return nuevo_nodo
@@ -121,7 +125,9 @@ class LCSE:
         actual = ordenada
 
         # Caso 1: Insertar al inicio si el valor es menor que la cabeza de la lista ordenada
-        if nuevo_nodo.data < ordenada.data:
+        nuevo_nodo_atributo=getattr(nuevo_nodo,criterio)
+        ordenada_atributo=getattr(ordenada,criterio)
+        if nuevo_nodo_atributo < ordenada_atributo:
             while actual.siguiente != ordenada:
                 actual = actual.siguiente
             actual.siguiente = nuevo_nodo
@@ -129,8 +135,10 @@ class LCSE:
             return nuevo_nodo
 
         # Caso 2: Insertar en cualquier otra parte de la lista ordenada
-        while actual.siguiente != ordenada and actual.siguiente.data < nuevo_nodo.data:
+        actual_siguiente_atributo=getattr(actual.siguiente,criterio)
+        while actual.siguiente != ordenada and actual_siguiente_atributo < nuevo_nodo_atributo:
             actual = actual.siguiente
+            actual_siguiente_atributo=getattr(actual.siguiente,criterio)
 
         # Insertar el nodo en la posición adecuada
         nuevo_nodo.siguiente = actual.siguiente
@@ -143,14 +151,21 @@ class LCSE:
 
 lista = LCSE()
 
-lista.agregarInicio(1,11,111,1111,(1,1))
-lista.agregarInicio(4,44,444,4444,(4,4))
-lista.agregarInicio(3,33,333,3333,(3,3))
-lista.agregarInicio(2,22,222,2222,(2,2))
+lista.agregarInicio(1,11,111,9999,(1,1))
+lista.agregarInicio(4,44,444,5555,(4,4))
+lista.agregarInicio(3,33,333,6666,(3,3))
+lista.agregarInicio(2,22,222,7777,(2,2))
 
 lista.ContarElementos()
-lista.insertionSort()
 lista.imprimirLista()
+lista.insertionSort("data")
+print("ordenda por data")
+lista.imprimirLista()
+
+lista.insertionSort("valor_mercancia")
+print("ordenda por valor_mercancia")
+lista.imprimirLista()
+
 lista.buscar(3,"data")
 lista.buscar((2,2),"coordenadas")
                 
