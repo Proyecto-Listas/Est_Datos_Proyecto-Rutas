@@ -1,4 +1,5 @@
 import math, random
+import matplotlib.pyplot as plt
 class Nodo:
     def __init__(self,data):
         self.data = data
@@ -18,7 +19,7 @@ class LCSE:
         self.cola = None
         self.base_coordenadas = (0,0)
 
-        
+
     def validarVacia(self):
         if self.cabeza == None:
             return True
@@ -58,7 +59,7 @@ class LCSE:
         else:
             actual = self.cabeza
             while True:
-                print(f"data:{actual.data}, id:{actual.id}, cantidad_paquetes:{actual.cantidad_paquetes}, vavlor_paquete:{actual.valor_mercancia}, coordenadas:{actual.coordenadas}")
+                print(f"data:{actual.data}, id:{actual.id}, cantidad_paquetes:{actual.cantidad_paquetes}, valor_mercancia:{actual.valor_mercancia}, coordenadas:{actual.coordenadas}")
                 if actual.siguiente == self.cabeza:
                     break
                 actual = actual.siguiente
@@ -87,7 +88,7 @@ class LCSE:
             return -1 
                 
 
-    def insertionSort(self,criterio):
+    def insertionSort(self,criterio,ascendente=True):
         if self.validarVacia() or self.cabeza.siguiente == self.cabeza:
             return  # Si la lista está vacía o tiene un solo elemento, no es necesario ordenar
         if (criterio=="data" or criterio == "id" or criterio == "cantidad_paquetes" or criterio =="valor_mercancia" or criterio=="coordenadas"):
@@ -115,7 +116,7 @@ class LCSE:
                 actual = actual.siguiente
             self.cola = actual
         else:
-                print("criterio de búsqueda inválido, sólo se admiten 'id','data','cantidad_paquetes','valor_mercancia' o 'coordenadas'")
+            print("criterio de búsqueda inválido, sólo se admiten 'id','data','cantidad_paquetes','valor_mercancia' o 'coordenadas'")
             
 
     def insertarOrdenado(self, ordenada, nuevo_nodo, criterio):
@@ -126,29 +127,48 @@ class LCSE:
         actual = ordenada
 
         # Caso 1: Insertar al inicio si el valor es menor que la cabeza de la lista ordenada
-        nuevo_nodo_atributo=getattr(nuevo_nodo,criterio)
-        ordenada_atributo=getattr(ordenada,criterio)
-        if nuevo_nodo_atributo < ordenada_atributo:
-            while actual.siguiente != ordenada:
-                actual = actual.siguiente
-            actual.siguiente = nuevo_nodo
-            nuevo_nodo.siguiente = ordenada
-            return nuevo_nodo
+
+        if criterio=="coordenadas":
+            if distancia(self.base_coordenadas, nuevo_nodo.coordenadas) < distancia(self.base_coordenadas,ordenada.coordenadas):
+                while actual.siguiente != ordenada:
+                    actual = actual.siguiente
+                actual.siguiente = nuevo_nodo
+                nuevo_nodo.siguiente = ordenada
+                return nuevo_nodo
+        else:
+            nuevo_nodo_atributo=getattr(nuevo_nodo,criterio)
+            ordenada_atributo=getattr(ordenada,criterio)
+
+            if nuevo_nodo_atributo < ordenada_atributo:
+                while actual.siguiente != ordenada:
+                    actual = actual.siguiente
+                actual.siguiente = nuevo_nodo
+                nuevo_nodo.siguiente = ordenada
+                return nuevo_nodo
 
         # Caso 2: Insertar en cualquier otra parte de la lista ordenada
-        actual_siguiente_atributo=getattr(actual.siguiente,criterio)
-        while actual.siguiente != ordenada and actual_siguiente_atributo < nuevo_nodo_atributo:
-            actual = actual.siguiente
+        if criterio=="coordenadas":
+            if distancia(self.base_coordenadas, nuevo_nodo.coordenadas) < distancia(self.base_coordenadas,ordenada.coordenadas):
+                while actual.siguiente != ordenada and distancia(actual.coordenadas,actual.siguiente.coordenadas) < distancia(actual.coordenadas,nuevo_nodo.coordenadas):
+                    actual = actual.siguiente
+                    actual_siguiente_atributo=getattr(actual.siguiente,criterio)
+        else:
             actual_siguiente_atributo=getattr(actual.siguiente,criterio)
 
-        # Insertar el nodo en la posición adecuada
-        nuevo_nodo.siguiente = actual.siguiente
-        actual.siguiente = nuevo_nodo
+            while actual.siguiente != ordenada and actual_siguiente_atributo < nuevo_nodo_atributo:
+                actual = actual.siguiente
+                actual_siguiente_atributo=getattr(actual.siguiente,criterio)
+
+            # Insertar el nodo en la posición adecuada
+            nuevo_nodo.siguiente = actual.siguiente
+            actual.siguiente = nuevo_nodo
 
         return ordenada
     
     
     
+def distancia(ubicacion_a, ubicacion_b):
+    return math.sqrt((ubicacion_b[0] - ubicacion_a[0])**2 + (ubicacion_b[1] - ubicacion_a[1])**2)
 
 class Demo ():
     def __init__(self):
@@ -156,6 +176,7 @@ class Demo ():
     def test():
         lista = LCSE()
         i = 0
+        print("El programa recibe una lista de 25 ubicaciones las almacena en una lista ")
         while i<15:
             i=i+1
             lista.agregarInicio(random.randint(0,100),random.randint(0,100),random.randint(0,5),random.randint(0,200000),(random.randint(-20,20),random.randint(-20,20)))
@@ -169,7 +190,37 @@ class Demo ():
         print("ordenda por valor_mercancia")
         lista.imprimirLista()
 
+        lista.insertionSort("coordenas")
+        print("ordenda por distancia")
+        lista.imprimirLista()
+
+
         lista.buscar(3,"data")
         lista.buscar((2,2),"coordenadas")
+
+        def visualizarRuta(ruta):
+            x_coords, y_coords, id = [], [], []
+            actual = ruta.cabeza
+            i=0
+            while actual !=ruta.cabeza or i==0:
+                i=i+1
+                x_coords.append(actual.coordenadas[0])
+                y_coords.append(actual.coordenadas[1])
+                id.append(actual.id)
+                actual = actual.siguiente
+
+            plt.figure(figsize=(8,6))
+            plt.plot(x_coords, y_coords, marker='o', linestyle='-', color='b')
+            for i, label in enumerate(id):
+                plt.annotate(f"{label}", (x_coords[i], y_coords[i]), textcoords="offset points", xytext=(0,10), ha='center')
+            plt.title("Visualización de la Ruta")
+            plt.xlabel("Coordenada X")
+            plt.ylabel("Coordenada Y")
+            plt.grid(True)
+            plt.show()
+
+        visualizarRuta(lista)
                 
 Demo.test()
+
+# Función para visualizar la ruta en un mapa
