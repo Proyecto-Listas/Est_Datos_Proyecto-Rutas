@@ -68,7 +68,7 @@ class LCSE:
             print("No hay ruta establecida")
             return
         else:
-            if (criterio=="peso" or criterio == "id" or criterio == "cantidad_paquetes" or criterio =="valor_mercancia" or criterio=="coordenadas"):
+            if (criterio=="peso" or criterio == "id" or criterio == "cantidad_paquetes" or criterio =="valor_mercancia" or criterio=="coordenadas" or criterio=="nombre"):
                 actual = self.cabeza
                 
                 contador = 0
@@ -177,7 +177,7 @@ class Demo ():
         print("El programa crea un sistema de rutas con 15 entradas de prueba totalmente aleatorias\n")
         while i<15:
             i=i+1
-            lista.agregarInicio(random.randint(0,10),random.randint(0,1000),random.randint(0,5),random.randint(0,200000),(random.randint(-20,20),random.randint(-20,20)),f"Farmacia{i}")
+            lista.agregarInicio(random.randint(1,10),random.randint(1,1000),random.randint(1,5),random.randint(1,200000),(random.randint(-20,20),random.randint(-20,20)),f"Farmacia{i}")
         lista.ContarElementos()
         print(lista.toString())
         lista.insertionSort("peso")
@@ -192,9 +192,12 @@ class Demo ():
         print("\nRuta ordenada por distancia\n")
         print(lista.toString())
 
-
+        print("buscando un envio con peso 3")
         lista.buscar(3,"peso")
+        print("buscando un envio con coordenadas (2,2)")
         lista.buscar((2,2),"coordenadas")
+        print("buscando una farmacia de nombre Farmacia11")
+        lista.buscar("Farmacia11","nombre")
 
         def visualizarRuta(ruta):
             x_coords, y_coords, id = [], [], []
