@@ -1,13 +1,14 @@
 import math, random
 import matplotlib.pyplot as plt
 class Nodo:
-    def __init__(self,peso,id,cantidad_paquetes,valor_mercancia,coordenadas,nombre):
+    def __init__(self,peso,id,cantidad_paquetes,valor_mercancia,coordenada_x,coordenada_y,nombre):
         self.peso = peso
         self.nombre = nombre
         self.id = id
         self.cantidad_paquetes = cantidad_paquetes
         self.valor_mercancia = valor_mercancia
-        self.coordenadas = coordenadas
+        self.coordenada_x = coordenada_x
+        self.coordenada_y = coordenada_y
         self.siguiente = None
 
     def toString(self):
@@ -17,7 +18,8 @@ class LCSE:
     def __init__(self):
         self.cabeza = None
         self.cola = None
-        self.base_coordenadas = (0,0)
+        self.base_coordenada_x = 0
+        self.base_coordenada_y = 0
 
 
     def validarVacia(self):
@@ -26,8 +28,8 @@ class LCSE:
         else:
             return False
             
-    def agregarInicio(self,peso,id=None,cantidad_paquetes=None,valor_mercancia=None,coordenadas=None,nombre=None):
-        nuevo_Nodo = Nodo(peso,id,cantidad_paquetes,valor_mercancia,coordenadas,nombre)
+    def agregarInicio(self,peso,id=None,cantidad_paquetes=None,valor_mercancia=None,coordenada_x=None,coordenada_y=None,nombre=None):
+        nuevo_Nodo = Nodo(peso,id,cantidad_paquetes,valor_mercancia,coordenada_x,coordenada_y,nombre)
         if self.validarVacia():
             nuevo_Nodo.siguiente = nuevo_Nodo
             self.cabeza = nuevo_Nodo
@@ -63,12 +65,12 @@ class LCSE:
                 return string
             temp = temp.siguiente
     
-    def buscar(self,valor,criterio):
+    def buscar(self,criterio,valor,valor2=None):
         if self.validarVacia():
             print("No hay ruta establecida")
             return
         else:
-            if (criterio=="peso" or criterio == "id" or criterio == "cantidad_paquetes" or criterio =="valor_mercancia" or criterio=="coordenadas" or criterio=="nombre"):
+            if (criterio=="peso" or criterio == "id" or criterio == "cantidad_paquetes" or criterio =="valor_mercancia"  or criterio=="nombre"):
                 actual = self.cabeza
                 
                 contador = 0
@@ -81,6 +83,18 @@ class LCSE:
                         return contador
                     actual = actual.siguiente
                 print("Elemento no encontrado")
+            elif criterio == "coordenadas":
+                actual = self.cabeza
+                contador = 0
+                while actual != self.cabeza or contador==0:
+
+                    contador=contador+1
+                    if actual.coordenada_x ==valor and actual.coordenada_y==valor2:
+                        print(f"Elemento Encontrado en posicion {contador}")
+                        return contador
+                    actual = actual.siguiente
+                print("Elemento no encontrado")
+
             else:
                 print("criterio de busqueda invalido, solo se admiten 'id','peso','cantidad_paquetes','valor_mercancia' o 'coordenadas'")
             
@@ -128,7 +142,7 @@ class LCSE:
         # Caso 1: Insertar al inicio si el valor es menor que la cabeza de la lista ordenada
 
         if criterio=="coordenadas":
-            if distancia(self.base_coordenadas, nuevo_nodo.coordenadas) < distancia(self.base_coordenadas,ordenada.coordenadas):
+            if distancia(self.base_coordenada_x,self.base_coordenada_y, nuevo_nodo.coordenada_x,nuevo_nodo.coordenada_y) < distancia(self.base_coordenada_x,self.base_coordenada_y,ordenada.coordenada_x,ordenada.coordenada_y):
                 while actual.siguiente != ordenada:
                     actual = actual.siguiente
                 actual.siguiente = nuevo_nodo
@@ -147,8 +161,8 @@ class LCSE:
 
         # Caso 2: Insertar en cualquier otra parte de la lista ordenada
         if criterio=="coordenadas":
-            if distancia(self.base_coordenadas, nuevo_nodo.coordenadas) < distancia(self.base_coordenadas,ordenada.coordenadas):
-                while actual.siguiente != ordenada and distancia(actual.coordenadas,actual.siguiente.coordenadas) < distancia(actual.coordenadas,nuevo_nodo.coordenadas):
+            if distancia(self.base_coordenada_x, self.base_coordenada_y, nuevo_nodo.coordenada_x, nuevo_nodo.coordenada_y) < distancia(self.base_coordenada_x, self.base_coordenada_y, ordenada.coordenada_x,ordenada.coordenada_y):
+                while actual.siguiente != ordenada and distancia(actual.coordenada_x,actual.coordenada_y,actual.siguiente.coordenada_x,actual.siguiente.coordenada_y) < distancia(actual.coordenada_x,actual.coordenada_y,nuevo_nodo.coordenada_x,nuevo_nodo.coordenada_y):
                     actual = actual.siguiente
                     actual_siguiente_atributo=getattr(actual.siguiente,criterio)
         else:
@@ -167,13 +181,13 @@ class LCSE:
             x_coords, y_coords, id = [], [], []
             actual = self.cabeza
             i=0
-            x_coords.append(self.base_coordenadas[0])
-            y_coords.append(self.base_coordenadas[1])
+            x_coords.append(self.base_coordenada_x)
+            y_coords.append(self.base_coordenada_y)
             id.append("BASE")
             while actual !=self.cabeza or i==0:
                 i=i+1
-                x_coords.append(actual.coordenadas[0])
-                y_coords.append(actual.coordenadas[1])
+                x_coords.append(actual.coordenada_x)
+                y_coords.append(actual.coordenada_y)
                 id.append(actual.id)
                 actual = actual.siguiente
 
@@ -187,8 +201,8 @@ class LCSE:
             plt.grid(True)
             plt.show()
     
-def distancia(ubicacion_a, ubicacion_b):
-    return math.sqrt((ubicacion_b[0] - ubicacion_a[0])**2 + (ubicacion_b[1] - ubicacion_a[1])**2)
+def distancia(x1,y1,x2,y2):
+    return math.sqrt((x2-x1)**2 + (y2-y1)**2)
 
 class Demo ():
     def __init__(self):
@@ -199,7 +213,7 @@ class Demo ():
         print("El programa crea un sistema de rutas con 15 entradas de prueba totalmente aleatorias\n")
         while i<15:
             i=i+1
-            lista.agregarInicio(random.randint(1,10),random.randint(1,1000),random.randint(1,5),random.randint(1,200000),(random.randint(-20,20),random.randint(-20,20)),f"Farmacia{i}")
+            lista.agregarInicio(random.randint(1,10),random.randint(1,1000),random.randint(1,5),random.randint(1,200000),random.randint(-20,20),random.randint(-20,20),f"Farmacia{i}")
         lista.ContarElementos()
         print(lista.toString())
         lista.insertionSort("peso")
@@ -215,11 +229,11 @@ class Demo ():
         print(lista.toString())
 
         print("buscando un envio con peso 3")
-        lista.buscar(3,"peso")
+        lista.buscar("peso",3)
         print("buscando un envio con coordenadas (2,2)")
-        lista.buscar((2,2),"coordenadas")
+        lista.buscar("coordenadas",2,2)
         print("buscando una farmacia de nombre Farmacia11")
-        lista.buscar("Farmacia11","nombre")
+        lista.buscar("nombre","Farmacia11")
         
         lista.visualizarRuta()
 
