@@ -163,7 +163,29 @@ class LCSE:
         actual.siguiente = nuevo_nodo
         return ordenada
     
-    
+    def visualizarRuta(self):
+            x_coords, y_coords, id = [], [], []
+            actual = self.cabeza
+            i=0
+            x_coords.append(self.base_coordenadas[0])
+            y_coords.append(self.base_coordenadas[1])
+            id.append("BASE")
+            while actual !=self.cabeza or i==0:
+                i=i+1
+                x_coords.append(actual.coordenadas[0])
+                y_coords.append(actual.coordenadas[1])
+                id.append(actual.id)
+                actual = actual.siguiente
+
+            plt.figure(figsize=(8,6))
+            plt.plot(x_coords, y_coords, marker='o', linestyle='-', color='b')
+            for i, label in enumerate(id):
+                plt.annotate(f"{label}", (x_coords[i], y_coords[i]), textcoords="offset points", xytext=(0,10), ha='center')
+            plt.title("Visualizacion de la Ruta")
+            plt.xlabel("Coordenada X")
+            plt.ylabel("Coordenada Y")
+            plt.grid(True)
+            plt.show()
     
 def distancia(ubicacion_a, ubicacion_b):
     return math.sqrt((ubicacion_b[0] - ubicacion_a[0])**2 + (ubicacion_b[1] - ubicacion_a[1])**2)
@@ -198,31 +220,9 @@ class Demo ():
         lista.buscar((2,2),"coordenadas")
         print("buscando una farmacia de nombre Farmacia11")
         lista.buscar("Farmacia11","nombre")
+        
+        lista.visualizarRuta(lista)
 
-        def visualizarRuta(ruta):
-            x_coords, y_coords, id = [], [], []
-            actual = ruta.cabeza
-            i=0
-            x_coords.append(lista.base_coordenadas[0])
-            y_coords.append(lista.base_coordenadas[1])
-            id.append("BASE")
-            while actual !=ruta.cabeza or i==0:
-                i=i+1
-                x_coords.append(actual.coordenadas[0])
-                y_coords.append(actual.coordenadas[1])
-                id.append(actual.id)
-                actual = actual.siguiente
-
-            plt.figure(figsize=(8,6))
-            plt.plot(x_coords, y_coords, marker='o', linestyle='-', color='b')
-            for i, label in enumerate(id):
-                plt.annotate(f"{label}", (x_coords[i], y_coords[i]), textcoords="offset points", xytext=(0,10), ha='center')
-            plt.title("Visualizacion de la Ruta")
-            plt.xlabel("Coordenada X")
-            plt.ylabel("Coordenada Y")
-            plt.grid(True)
-            plt.show()
-
-        visualizarRuta(lista)
+        
                 
 Demo.test()
