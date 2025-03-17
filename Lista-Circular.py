@@ -225,19 +225,19 @@ class LCSE:
             i=0
             x_coords.append(self.base_coordenada_x)
             y_coords.append(self.base_coordenada_y)
-            id.append("BASE")
+            id.append("Distribuidora")
             while actual !=self.cabeza or i==0:
                 i=i+1
                 x_coords.append(actual.coordenada_x)
                 y_coords.append(actual.coordenada_y)
-                id.append(actual.id)
+                id.append(actual.nombre)
                 actual = actual.siguiente
 
             plt.figure(figsize=(8,6))
             plt.plot(x_coords, y_coords, marker='o', linestyle='-', color='b')
             for i, label in enumerate(id):
                 plt.annotate(f"{label}", (x_coords[i], y_coords[i]), textcoords="offset points", xytext=(0,10), ha='center')
-            plt.title("Visualizacion de la Ruta")
+            plt.title("Distribuidora De Medicamentos E Insumos Hospitalarios Ltda\nVisualizacion de la Ruta")
             plt.xlabel("Coordenada X")
             plt.ylabel("Coordenada Y")
             plt.grid(True)
@@ -253,7 +253,7 @@ class Demo ():
         print("Inicializando prueba de la clase demo:")
         lista = LCSE()
         i = 0
-        print("Se crea un sistema de rutas con 15 entradas de prueba totalmente aleatorias\n")
+        print("Se crea un sistema de rutas con 10 entradas de prueba reales\n")
 
         
         lista.agregarInicio(random.randint(1,10),random.randint(1,1000),random.randint(1,5),random.randint(1,200000),165.59,-281.63,"Clinica Bucaramanga")
