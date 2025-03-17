@@ -12,7 +12,7 @@ class Nodo:
         self.siguiente = None
 
     def toString(self):
-        return f"{self.id:3} | {self.nombre:20} | {self.peso:9} | {self.cantidad_paquetes:8} | {self.valor_mercancia:6}"
+        return f"{self.id:3} | {self.nombre:20} | {self.peso:9} | {self.cantidad_paquetes:8} | {self.valor_mercancia:6} | ({self.coordenada_x},{self.coordenada_y})"
         
 class LCSE:
     def __init__(self):
@@ -58,7 +58,7 @@ class LCSE:
         if self.validarVacia():
             return "No hay ruta establecida"
         temp = self.cabeza
-        string = " ID | Nombre               | Peso (kg) | Paquetes |  Valor"
+        string = " ID | Nombre               | Peso (kg) | Paquetes |  Valor | Coordenadas"
         while( True ):
             string = string + "\n" + temp.toString()
             if temp.siguiente == self.cabeza:
