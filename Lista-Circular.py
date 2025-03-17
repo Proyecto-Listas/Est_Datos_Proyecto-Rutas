@@ -104,7 +104,7 @@ class LCSE:
     def insertionSort(self,criterio,ascendente=True):
         if self.validarVacia() or self.cabeza.siguiente == self.cabeza:
             return  # Si la lista está vacía o tiene un solo elemento, no es necesario ordenar
-        if (criterio=="peso" or criterio == "id" or criterio == "cantidad_paquetes" or criterio =="valor_mercancia" or criterio=="coordenadas"):
+        if (criterio=="peso" or criterio == "id" or criterio == "cantidad_paquetes" or criterio =="valor_mercancia"):
 
             ordenada = None  # La nueva lista ordenada
 
@@ -128,6 +128,57 @@ class LCSE:
             while actual.siguiente != self.cabeza:
                 actual = actual.siguiente
             self.cola = actual
+
+        
+        elif criterio == "coordenadas":    
+            #buscando la cola
+            actual =self.cabeza
+            while actual.siguiente != self.cabeza:
+                actual=actual.siguiente
+            cola = actual
+
+            mas_cercano = self.cabeza
+            anterior_al_mas_cercano = cola
+            #encontramos el más cercano a la base
+            actual =self.cabeza
+            i=0
+            while actual != self.cabeza or i==0:
+                i=i+1
+                if distancia(self.base_coordenada_x, self.base_coordenada_y,actual.siguiente.coordenada_x,actual.siguiente.coordenada_y) < distancia(self.base_coordenada_x,self.base_coordenada_y,mas_cercano.coordenada_x,mas_cercano.coordenada_y):
+                    anterior_al_mas_cercano = actual
+                    mas_cercano = actual.siguiente
+                actual=actual.siguiente
+            if mas_cercano==self.cabeza:
+                self.cabeza=self.cabeza.siguiente
+            anterior_al_mas_cercano.siguiente=mas_cercano.siguiente
+            primerordenado=mas_cercano
+            ordenado=mas_cercano
+            ordenado.siguiente=ordenado
+
+            #ahora encontramos el más cercano al más cercano a la base
+            while self.cabeza.siguiente!=self.cabeza:
+
+                i=0
+                actual=self.cabeza
+                mas_cercano=actual
+                while actual != self.cabeza or i==0:
+                    i=i+1
+                    if distancia(ordenado.coordenada_x,ordenado.coordenada_y, actual.siguiente.coordenada_x,actual.siguiente.coordenada_y) < distancia(ordenado.coordenada_x,ordenado.coordenada_y,mas_cercano.coordenada_x,mas_cercano.coordenada_y):
+                        anterior_al_mas_cercano = actual
+                        mas_cercano = actual.siguiente
+                    actual=actual.siguiente
+                if mas_cercano==self.cabeza:
+                    self.cabeza=self.cabeza.siguiente
+                anterior_al_mas_cercano.siguiente=mas_cercano.siguiente
+                ordenado.siguiente=mas_cercano
+                ordenado=mas_cercano
+
+            ordenado.siguiente=self.cabeza
+            ordenado=self.cabeza
+            self.cabeza = primerordenado
+            ordenado.siguiente=primerordenado
+
+  
         else:
             print("criterio de busqueda invalido, solo se admiten 'id','peso','cantidad_paquetes','valor_mercancia' o 'coordenadas'")
             
@@ -141,36 +192,22 @@ class LCSE:
 
         # Caso 1: Insertar al inicio si el valor es menor que la cabeza de la lista ordenada
 
-        if criterio=="coordenadas":
-            if distancia(self.base_coordenada_x,self.base_coordenada_y, nuevo_nodo.coordenada_x,nuevo_nodo.coordenada_y) < distancia(self.base_coordenada_x,self.base_coordenada_y,ordenada.coordenada_x,ordenada.coordenada_y):
-                while actual.siguiente != ordenada:
-                    actual = actual.siguiente
-                actual.siguiente = nuevo_nodo
-                nuevo_nodo.siguiente = ordenada
-                return nuevo_nodo
-        else:
-            nuevo_nodo_atributo=getattr(nuevo_nodo,criterio)
-            ordenada_atributo=getattr(ordenada,criterio)
+        nuevo_nodo_atributo=getattr(nuevo_nodo,criterio)
+        ordenada_atributo=getattr(ordenada,criterio)
 
-            if nuevo_nodo_atributo < ordenada_atributo:
-                while actual.siguiente != ordenada:
-                    actual = actual.siguiente
-                actual.siguiente = nuevo_nodo
-                nuevo_nodo.siguiente = ordenada
-                return nuevo_nodo
+        if nuevo_nodo_atributo < ordenada_atributo:
+            while actual.siguiente != ordenada:
+                actual = actual.siguiente
+            actual.siguiente = nuevo_nodo
+            nuevo_nodo.siguiente = ordenada
+            return nuevo_nodo
 
         # Caso 2: Insertar en cualquier otra parte de la lista ordenada
-        if criterio=="coordenadas":
-            if distancia(self.base_coordenada_x, self.base_coordenada_y, nuevo_nodo.coordenada_x, nuevo_nodo.coordenada_y) < distancia(self.base_coordenada_x, self.base_coordenada_y, ordenada.coordenada_x,ordenada.coordenada_y):
-                while actual.siguiente != ordenada and distancia(actual.coordenada_x,actual.coordenada_y,actual.siguiente.coordenada_x,actual.siguiente.coordenada_y) < distancia(actual.coordenada_x,actual.coordenada_y,nuevo_nodo.coordenada_x,nuevo_nodo.coordenada_y):
-                    actual = actual.siguiente
-                    actual_siguiente_atributo=getattr(actual.siguiente,criterio)
-        else:
-            actual_siguiente_atributo=getattr(actual.siguiente,criterio)
+        actual_siguiente_atributo=getattr(actual.siguiente,criterio)
 
-            while actual.siguiente != ordenada and actual_siguiente_atributo < nuevo_nodo_atributo:
-                actual = actual.siguiente
-                actual_siguiente_atributo=getattr(actual.siguiente,criterio)
+        while actual.siguiente != ordenada and actual_siguiente_atributo < nuevo_nodo_atributo:
+            actual = actual.siguiente
+            actual_siguiente_atributo=getattr(actual.siguiente,criterio)
 
         # Insertar el nodo en la posición adecuada
         nuevo_nodo.siguiente = actual.siguiente
