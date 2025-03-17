@@ -221,7 +221,7 @@ class Demo ():
         print("buscando una farmacia de nombre Farmacia11")
         lista.buscar("Farmacia11","nombre")
         
-        lista.visualizarRuta(lista)
+        lista.visualizarRuta()
 
         
                 
