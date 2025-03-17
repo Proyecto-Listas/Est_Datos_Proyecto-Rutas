@@ -1,3 +1,8 @@
+#Realizado por:
+#Daniver Franchesco Hernandez Acero 2240032
+#Juan Manuel Niño Piña 2240040
+#Juan Manuel Rivera Torres 2240046
+#Luis Felipe Rueda Garcia 2240021
 import math, random
 import matplotlib.pyplot as plt
 class Nodo:
@@ -245,9 +250,10 @@ class Demo ():
     def __init__(self):
         print("test")
     def test():
+        print("Inicializando prueba de la clase demo:")
         lista = LCSE()
         i = 0
-        print("El programa crea un sistema de rutas con 15 entradas de prueba totalmente aleatorias\n")
+        print("Se crea un sistema de rutas con 15 entradas de prueba totalmente aleatorias\n")
         while i<15:
             i=i+1
             lista.agregarInicio(random.randint(1,10),random.randint(1,1000),random.randint(1,5),random.randint(1,200000),random.randint(-20,20),random.randint(-20,20),f"Farmacia{i}")
@@ -263,15 +269,17 @@ class Demo ():
 
         lista.insertionSort("coordenadas")
         print("\nRuta ordenada por distancia\n")
+        print("Es la ruta mas corta posible")
         print(lista.toString())
 
-        print("buscando un envio con peso 3")
+        print("Buscando un envio con peso 3")
         lista.buscar("peso",3)
-        print("buscando un envio con coordenadas (2,2)")
+        print("Buscando un envio con coordenadas (2,2)")
         lista.buscar("coordenadas",2,2)
-        print("buscando una farmacia de nombre Farmacia11")
+        print("Buscando una farmacia de nombre Farmacia11")
         lista.buscar("nombre","Farmacia11")
         
+        print("\nLa ruta se mostrara ordenada por distancia")
         lista.visualizarRuta()
 
         
