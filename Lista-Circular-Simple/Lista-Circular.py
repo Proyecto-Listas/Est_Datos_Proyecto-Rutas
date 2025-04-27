@@ -176,12 +176,12 @@ class LCSE:
                 self.cabeza=self.cabeza.siguiente
             #ahora hacemos que el nodo anterior al mascercano apunte al siguiente al nodo mascercano (para poder removerlo el mascercano de la lista sin romperla)
             anterior_al_mas_cercano.siguiente=mas_cercano.siguiente
-            #guardamos en la variable primerordenado (la cabeza de la nueva lista ya ordenada) el más cercano
-            primerordenado=mas_cercano
-            #guardamos en la variable ordenado el más cercano ("ordenado" será siempre el último nodo agragado a la nueva lista ya ordenada)
-            ordenado=mas_cercano
-            #cerramos la nueva lista circular haciendo que este nodo al que apunta ordenado se apunte a sí mismo
-            ordenado.siguiente=ordenado
+            #guardamos en la variable primer_ordenado (la cabeza de la nueva lista ya ordenada) el más cercano
+            primer_ordenado=mas_cercano
+            #guardamos en la variable ultimo_ordenado el más cercano ("ultimo_ordenado" será siempre el último nodo agragado a la nueva lista ya ordenada)
+            ultimo_ordenado=mas_cercano
+            #cerramos la nueva lista circular haciendo que este nodo al que apunta ultimo_ordenado tenga como .siguiente a sí mismo
+            ultimo_ordenado.siguiente=ultimo_ordenado
 
             #ahora encontramos el nodo más cercano al ultimo nodo agregado a la lista ya ordenada, (es deicir la siguiente parada más cercana a la parada actual en una ruta) y lo quitamos de la lista a ordenar, u original, y lo agregamos a la lista ya ordenada
 
@@ -209,8 +209,8 @@ class LCSE:
                 while actual != self.cabeza or i==0:
                     #cambiamos el valor de i
                     i=i+1
-                    #si la distancia entre el último nodo agregado a la lista ya ordenada y el nodo siguiente al actual es menor a la distancia entre (ordenado) el último nodo agregado a la lista ya ordenada y (mascercano) el más cercano encontrado hasta el momento, (en la primer iteración este más cercano sería el mismo "actual", por eso empezamos comparando con el siguiente al actual)
-                    if distancia(ordenado.coordenada_x,ordenado.coordenada_y, actual.siguiente.coordenada_x,actual.siguiente.coordenada_y) < distancia(ordenado.coordenada_x,ordenado.coordenada_y,mas_cercano.coordenada_x,mas_cercano.coordenada_y):
+                    #si la distancia entre el último nodo agregado a la lista ya ordenada y el nodo siguiente al actual es menor a la distancia entre ultimo_ordenado (el último nodo agregado a la lista ya ordenada) y mas_cercano (el más cercano encontrado hasta el momento), [en la primer iteración este más cercano sería el mismo "actual", por eso empezamos comparando con el siguiente al actual]
+                    if distancia(ultimo_ordenado.coordenada_x,ultimo_ordenado.coordenada_y, actual.siguiente.coordenada_x,actual.siguiente.coordenada_y) < distancia(ultimo_ordenado.coordenada_x,ultimo_ordenado.coordenada_y,mas_cercano.coordenada_x,mas_cercano.coordenada_y):
                          #actualizamos que el anterior al más cercano es ahora el actual pues en la comparación el siguiente al actual fue el máscercano
                         anterior_al_mas_cercano = actual
                         #se actualiza el nodo almacendo en la variable más cercano
@@ -227,20 +227,20 @@ class LCSE:
                 #ahora hacemos que el nodo anterior al mascercano apunte al siguiente al nodo mascercano (para poder removerlo el mascercano de la lista sin romperla)
                 anterior_al_mas_cercano.siguiente=mas_cercano.siguiente
                 #hacemos que el último en la lista ya ordenada apunte al más cercano (así lo agregamos a la lista ordenada)
-                ordenado.siguiente=mas_cercano
+                ultimo_ordenado.siguiente=mas_cercano
                 #ahora el último en la lista ordenada es el más cercano encontrado en la última iteración
-                ordenado=mas_cercano
+                ultimo_ordenado=mas_cercano
                 #hacemos que el último agregado a la lista ordenada apunte a la cabeza para completar la lista cerrada
-                ordenado.siguiente=primerordenado
+                ultimo_ordenado.siguiente=primer_ordenado
 
             #una vez se sale del ciclo externo la lista a orderar (original) ya  sólo tiene un elemento, la cabeza, agregamos este nodo a la lista ya ordenada, asiendo que el último en la lista ordenada ahora apunte a la cabeza
-            ordenado.siguiente=self.cabeza
+            ultimo_ordenado.siguiente=self.cabeza
             #ahora el último en la lista ordenada es la cabeza de la lista original
-            ordenado=self.cabeza
-            #hacemos que el primer ordenado (cabeza de la lista ordenada) sea la cabeza de nuestra lista original que ahora estará ya ordenada
-            self.cabeza = primerordenado
+            ultimo_ordenado=self.cabeza
+            #hacemos que el primer_ordenado (cabeza de la lista ordenada) sea la cabeza de nuestra lista original que ahora estará ya ordenada
+            self.cabeza = primer_ordenado
             #hacemos que este último nodo agregado a la lista ya ordenada(anterior cabeza de la lista original) ahora apunte a la cabeza de la lista para cerrar la lista original ordenada
-            ordenado.siguiente=primerordenado
+            ultimo_ordenado.siguiente=primer_ordenado
 
   
         else:
