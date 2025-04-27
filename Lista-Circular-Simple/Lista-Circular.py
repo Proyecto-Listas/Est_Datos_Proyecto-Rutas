@@ -137,50 +137,109 @@ class LCSE:
         
         elif criterio == "coordenadas":    
             #buscando la cola
+            #actual es el nodo que se está examinando en cada recorrido, empezamos desde la cabeza
             actual =self.cabeza
+            #mientras que el nodo siguente al nodo actual sea diferente de la cabeza, es decir mientras el nodo actual no sea la cola
             while actual.siguiente != self.cabeza:
+                #guardamos en nuestra apuntador "actual" el nodo siguiente al actual
                 actual=actual.siguiente
+            #si se salió del bucle el valor de "actual" debe ser la cola de la lista, lo guardamos en la variable "cola"
             cola = actual
 
+            #variable que almacena el nodo "más cercano" a el último nodo agregado a la ruta ordenada por distancia,pero EL MAS CERCANO ENCONTRADO HASTA EL MOMENTO es decir el nodo que almacena esta variable va cambiando en medio del recorrido según se encuentre un nodo más cercano, en este caso guardamos en él la cabeza mientras recorremos toda lista comparando hasta que quede uno más cercano que ese
             mas_cercano = self.cabeza
+            #al mover un nodo de una posición para no romper la lista circular necesitamos que el anterior a ese nodo apunte a el siguiente de ese nodo, así cuando "quitemos" un nodo de una posición la lista no se rompa, por eso nesecitamos esta variable
             anterior_al_mas_cercano = cola
-            #encontramos el más cercano a la base
+
+            #encontramos el más cercano a la base ( en este caso, coordenadas (0,0))
+            #actual es el nodo que se está examinando en cada recorrido, empezamos desde la cabeza
             actual =self.cabeza
+            #variable cuyo valor aumenta dentro del bucle
             i=0
+            #mientras que "actual" sea diferente de la cabeza (actual es igual a cabeza en la primera iteración o cuando ya se recorrió la lista por completo), o cuando i==0, esta segunda condición sólo ocurre antes de entrar el bucle ya que una vez dentro el valor de i cambia, (esto es para que a pesar de que la primera vez que se axamina "actual" es igual a "cabeza" aún así entre en el bucle pero la siguiente vez que esto ocurra ya no)
             while actual != self.cabeza or i==0:
-                i=i+1
+                #cambiamos el valor de i
+                i= i+1
+                #si la distancia entre la base y el nodo siguiente al actual es menor a la distancia entre la base y más cercano encontrado hasta el momento (en la primer iteración este más cercano sería el mismo "actual", por eso empezamos comparando con el siguiente al actual)
                 if distancia(self.base_coordenada_x, self.base_coordenada_y,actual.siguiente.coordenada_x,actual.siguiente.coordenada_y) < distancia(self.base_coordenada_x,self.base_coordenada_y,mas_cercano.coordenada_x,mas_cercano.coordenada_y):
+                    #actualizamos que el anterior al más cercano es ahora el actual pues en la comparación el siguiente al actual fue el máscercano
                     anterior_al_mas_cercano = actual
+                    #se actualiza el nodo almacendo en la variable más cercano,
                     mas_cercano = actual.siguiente
+                #sin importar si los valores de mascercano y anterioralmascercano se actualizaron o no, en la variable acutal ahora almacenamos el nodo siguiente al guardado en actual
                 actual=actual.siguiente
+            #si se salió del bucle es porque por segunda vez en nodo guardado en actual es la cabeza, es decir se recorrio toda la lista (sin alterarla)    
+            
+            #si el más cercano es la cabeza
             if mas_cercano==self.cabeza:
+                #guardamos como cabeza de la lista al siguiente (como luego vamos a remover al nodo más cercano en este caso la cabeza de la lista, no queremos que self.cabeza a punte a un nodo que no está en la lista porque no tendríamos como acceder al resto de nodos de la lista a ordenar)
                 self.cabeza=self.cabeza.siguiente
+            #ahora hacemos que el nodo anterior al mascercano apunte al siguiente al nodo mascercano (para poder removerlo el mascercano de la lista sin romperla)
             anterior_al_mas_cercano.siguiente=mas_cercano.siguiente
+            #guardamos en la variable primerordenado (la cabeza de la nueva lista ya ordenada) el más cercano
             primerordenado=mas_cercano
+            #guardamos en la variable ordenado el más cercano ("ordenado" será siempre el último nodo agragado a la nueva lista ya ordenada)
             ordenado=mas_cercano
+            #cerramos la nueva lista circular haciendo que este nodo al que apunta ordenado se apunte a sí mismo
             ordenado.siguiente=ordenado
 
-            #ahora encontramos el más cercano al más cercano a la base
+            #ahora encontramos el nodo más cercano al ultimo nodo agregado a la lista ya ordenada, (es deicir la siguiente parada más cercana a la parada actual en una ruta) y lo quitamos de la lista a ordenar, u original, y lo agregamos a la lista ya ordenada
+
+            #mientras que el siguiente a la cabeza sea diferete a la cabeza, es decir la lista a ordenar se haya vaciado y sólo que un nodo por odernar
             while self.cabeza.siguiente!=self.cabeza:
 
-                i=0
+
+                #encotramos la cola de la lista original
+                actual =self.cabeza
+                #mientras que el nodo siguente al nodo actual sea diferente de la cabeza, es decir mientras el nodo actual no sea la cola
+                while actual.siguiente != self.cabeza:
+                    #guardamos en nuestra apuntador "actual" el nodo siguiente al actual
+                    actual=actual.siguiente
+                #si se salió del bucle el valor de "actual" debe ser la cola de la lista, lo guardamos en la variable "cola"
+                cola = actual
+
+                #restauramos las valores de actual y máscercano para que sean la cabeza y empezar a recorrerla lista otra vez
                 actual=self.cabeza
                 mas_cercano=actual
+                #restauramos el valor de anterior al mas cercano para que sea la cola
+                anterior_al_mas_cercano = cola
+                #volvemos a darle el valor de 0 a i para que se pueda ingresar en el siguiente bucle interno, aún con actual siendo igual a cabeza
+                i=0
+                #mientras que "actual" sea diferente de la cabeza (actual es igual a cabeza en la primera iteración o cuando ya se recorrió la lista por completo), o cuando i==0, esta segunda condición sólo ocurre antes de entrar el bucle ya que una vez dentro el valor de i cambia, (esto es para que a pesar de que la primera vez que se axamina "actual" es igual a "cabeza" aún así entre en el bucle pero la siguiente vez que esto ocurra ya no)
                 while actual != self.cabeza or i==0:
+                    #cambiamos el valor de i
                     i=i+1
+                    #si la distancia entre el último nodo agregado a la lista ya ordenada y el nodo siguiente al actual es menor a la distancia entre (ordenado) el último nodo agregado a la lista ya ordenada y (mascercano) el más cercano encontrado hasta el momento, (en la primer iteración este más cercano sería el mismo "actual", por eso empezamos comparando con el siguiente al actual)
                     if distancia(ordenado.coordenada_x,ordenado.coordenada_y, actual.siguiente.coordenada_x,actual.siguiente.coordenada_y) < distancia(ordenado.coordenada_x,ordenado.coordenada_y,mas_cercano.coordenada_x,mas_cercano.coordenada_y):
+                         #actualizamos que el anterior al más cercano es ahora el actual pues en la comparación el siguiente al actual fue el máscercano
                         anterior_al_mas_cercano = actual
+                        #se actualiza el nodo almacendo en la variable más cercano
                         mas_cercano = actual.siguiente
+                    #sin importar si los valores de mascercano y anterioralmascercano se actualizaron o no, en la variable acutal ahora almacenamos el nodo siguiente al guardado en actual
                     actual=actual.siguiente
+            #si se salió de este bucle interno es porque por segunda vez en nodo guardado en actual es la cabeza, es decir se recorrio toda la lista (sin alterarla)    
+            
+            #si el más cercano es la cabeza
                 if mas_cercano==self.cabeza:
+                    #guardamos como cabeza de la lista al siguiente (como luego vamos a remover al nodo más cercano en este caso la cabeza de la lista, no queremos que self.cabeza a punte a un nodo que no está en la lista porque no tendríamos como acceder al resto de nodos de la lista a ordenar)
                     self.cabeza=self.cabeza.siguiente
-                anterior_al_mas_cercano.siguiente=mas_cercano.siguiente
-                ordenado.siguiente=mas_cercano
-                ordenado=mas_cercano
 
+                #ahora hacemos que el nodo anterior al mascercano apunte al siguiente al nodo mascercano (para poder removerlo el mascercano de la lista sin romperla)
+                anterior_al_mas_cercano.siguiente=mas_cercano.siguiente
+                #hacemos que el último en la lista ya ordenada apunte al más cercano (así lo agregamos a la lista ordenada)
+                ordenado.siguiente=mas_cercano
+                #ahora el último en la lista ordenada es el más cercano encontrado en la última iteración
+                ordenado=mas_cercano
+                #hacemos que el último agregado a la lista ordenada apunte a la cabeza para completar la lista cerrada
+                ordenado.siguiente=primerordenado
+
+            #una vez se sale del ciclo externo la lista a orderar (original) ya  sólo tiene un elemento, la cabeza, agregamos este nodo a la lista ya ordenada, asiendo que el último en la lista ordenada ahora apunte a la cabeza
             ordenado.siguiente=self.cabeza
+            #ahora el último en la lista ordenada es la cabeza de la lista original
             ordenado=self.cabeza
+            #hacemos que el primer ordenado (cabeza de la lista ordenada) sea la cabeza de nuestra lista original que ahora estará ya ordenada
             self.cabeza = primerordenado
+            #hacemos que este último nodo agregado a la lista ya ordenada(anterior cabeza de la lista original) ahora apunte a la cabeza de la lista para cerrar la lista original ordenada
             ordenado.siguiente=primerordenado
 
   
