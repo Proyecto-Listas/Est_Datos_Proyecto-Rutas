@@ -253,19 +253,41 @@ class Demo ():
         print("Inicializando prueba de la clase demo:")
         lista = LCSE()
         i = 0
-        print("Se crea un sistema de rutas con 10 entradas de prueba reales\n")
-
+        stay=True
+        while(stay):
+            TypeOfSimulation = input("Desea Probar probar con datos generados aleatoriamente o datos reales \nIngrese 1 para datos reales,\n0 para datos generados\n")
+            if TypeOfSimulation.isnumeric():
+                TypeOfSimulation = int(TypeOfSimulation)
+                if TypeOfSimulation==0:
+                    print("Ha elegido la opcion 0 los Datos se generaran aleatoriamente")
+                    stay=False
+                elif TypeOfSimulation==1:
+                    print("Ha elegido la opcion 1 se usaran los datos reales")
+                    stay=False
+            else:
+                print(f"La opcion ingresada solo puede ser 0 o 1.\n {TypeOfSimulation} no es un tipo de opcion valida \n")
         
-        lista.agregarInicio(random.randint(1,10),random.randint(1,1000),random.randint(1,5),random.randint(1,200000),165.59,-281.63,"Clinica Bucaramanga")
-        lista.agregarInicio(random.randint(1,10),random.randint(1,1000),random.randint(1,5),random.randint(1,200000),-50.58,-471.17,"Clinica Chicamocha")
-        lista.agregarInicio(random.randint(1,10),random.randint(1,1000),random.randint(1,5),random.randint(1,200000),196.66,242.43,"Drogueria Colsubsidio")
-        lista.agregarInicio(random.randint(1,10),random.randint(1,1000),random.randint(1,5),random.randint(1,200000),-250.1,-116.22,"Farmatodo")
-        lista.agregarInicio(random.randint(1,10),random.randint(1,1000),random.randint(1,5),random.randint(1,200000),-436.03,607.43,"Farmacia La rebaja")
-        lista.agregarInicio(random.randint(1,10),random.randint(1,1000),random.randint(1,5),random.randint(1,200000),360.21,795.22,"Drogueria Alemana")
-        lista.agregarInicio(random.randint(1,10),random.randint(1,1000),random.randint(1,5),random.randint(1,200000),-483.81,303.81,"Clinica San Luis")
-        lista.agregarInicio(random.randint(1,10),random.randint(1,1000),random.randint(1,5),random.randint(1,200000),-239.04,833.36,"Drogueria Ahorremas")
-        lista.agregarInicio(random.randint(1,10),random.randint(1,1000),random.randint(1,5),random.randint(1,200000),271.23,47.15,"Cruz verde")
-        lista.agregarInicio(random.randint(1,10),random.randint(1,1000),random.randint(1,5),random.randint(1,200000),25.06,-360.52,"Drogas Paguealcosto")
+
+
+        if TypeOfSimulation==0:
+            print("Se crea un sistema de rutas con 15 entradas de prueba\n")
+            while i<15:
+                i=i+1
+                lista.agregarInicio(random.randint(1,10),random.randint(1,1000),random.randint(1,5),random.randint(1,200000),random.randint(-20,20),random.randint(-20,20),f"Farmacia{i}")
+        else:
+            print("Se crea un sistema de rutas con 10 entradas de prueba reales\n")
+
+            
+            lista.agregarInicio(random.randint(1,10),random.randint(1,1000),random.randint(1,5),random.randint(1,200000),165.59,-281.63,"Clinica Bucaramanga")
+            lista.agregarInicio(random.randint(1,10),random.randint(1,1000),random.randint(1,5),random.randint(1,200000),-50.58,-471.17,"Clinica Chicamocha")
+            lista.agregarInicio(random.randint(1,10),random.randint(1,1000),random.randint(1,5),random.randint(1,200000),196.66,242.43,"Drogueria Colsubsidio")
+            lista.agregarInicio(random.randint(1,10),random.randint(1,1000),random.randint(1,5),random.randint(1,200000),-250.1,-116.22,"Farmatodo")
+            lista.agregarInicio(random.randint(1,10),random.randint(1,1000),random.randint(1,5),random.randint(1,200000),-436.03,607.43,"Farmacia La rebaja")
+            lista.agregarInicio(random.randint(1,10),random.randint(1,1000),random.randint(1,5),random.randint(1,200000),360.21,795.22,"Drogueria Alemana")
+            lista.agregarInicio(random.randint(1,10),random.randint(1,1000),random.randint(1,5),random.randint(1,200000),-483.81,303.81,"Clinica San Luis")
+            lista.agregarInicio(random.randint(1,10),random.randint(1,1000),random.randint(1,5),random.randint(1,200000),-239.04,833.36,"Drogueria Ahorremas")
+            lista.agregarInicio(random.randint(1,10),random.randint(1,1000),random.randint(1,5),random.randint(1,200000),271.23,47.15,"Cruz verde")
+            lista.agregarInicio(random.randint(1,10),random.randint(1,1000),random.randint(1,5),random.randint(1,200000),25.06,-360.52,"Drogas Paguealcosto")
         lista.ContarElementos()
         print(lista.toString())
         lista.insertionSort("peso")
@@ -285,8 +307,12 @@ class Demo ():
         lista.buscar("peso",3)
         print("Buscando un envio con coordenadas (2,2)")
         lista.buscar("coordenadas",2,2)
+        print("Buscando un envio con coordenadas (-50.58,-471.17)")
+        lista.buscar("coordenadas",-50.58,-471.17)
         print("Buscando una farmacia de nombre Farmacia11")
-        lista.buscar("nombre","Farmacia11")
+        lista.buscar("nombre","Farmacia11")      
+        print("Buscando una farmacia de nombre Farmatodo")
+        lista.buscar("nombre","Farmatodo")
         
         print("\nLa ruta se mostrara ordenada por distancia")
         lista.visualizarRuta()
