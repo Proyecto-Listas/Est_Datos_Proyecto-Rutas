@@ -47,8 +47,7 @@ class LCSE:
     
     def ContarElementos(self):
         if self.validarVacia():
-            print("No hay ruta establecida")
-            return
+            return 0
         else:
             contador = 1
             actual = self.cabeza
@@ -57,11 +56,12 @@ class LCSE:
                     break
                 actual = actual.siguiente
                 contador += 1
-            print (f"La ruta contiene {contador} paradas\n")
+        return contador
+
     
     def toString(self):
         if self.validarVacia():
-            return "No hay ruta establecida"
+            return -1
         temp = self.cabeza
         string = " ID | Nombre                | Peso (kg) | Paquetes |  Valor | Coordenadas"
         while( True ):
@@ -72,8 +72,7 @@ class LCSE:
     
     def buscar(self,criterio,valor,valor2=None):
         if self.validarVacia():
-            print("No hay ruta establecida")
-            return
+            return -1
         else:
             if (criterio=="peso" or criterio == "id" or criterio == "cantidad_paquetes" or criterio =="valor_mercancia"  or criterio=="nombre"):
                 actual = self.cabeza
@@ -84,10 +83,9 @@ class LCSE:
                     contador=contador+1
                     atributo=getattr(actual,criterio)
                     if atributo == valor:
-                        print(f"Elemento Encontrado en posicion {contador}")
                         return contador
                     actual = actual.siguiente
-                print("Elemento no encontrado")
+                return -1
             elif criterio == "coordenadas":
                 actual = self.cabeza
                 contador = 0
@@ -95,20 +93,18 @@ class LCSE:
 
                     contador=contador+1
                     if actual.coordenada_x ==valor and actual.coordenada_y==valor2:
-                        print(f"Elemento Encontrado en posicion {contador}")
                         return contador
                     actual = actual.siguiente
-                print("Elemento no encontrado")
+                return -1
 
             else:
-                print("criterio de busqueda invalido, solo se admiten 'id','peso','cantidad_paquetes','valor_mercancia' o 'coordenadas'")
-            
-            return -1 
+                #print("criterio de busqueda invalido, solo se admiten 'id','peso','cantidad_paquetes','valor_mercancia' o 'coordenadas'")
+                return -1 
                 
 
-    def insertionSort(self,criterio,ascendente=True):
+    def insertionSort(self,criterio):
         if self.validarVacia() or self.cabeza.siguiente == self.cabeza:
-            return  # Si la lista está vacía o tiene un solo elemento, no es necesario ordenar
+            return 0 # Si la lista está vacía o tiene un solo elemento, no es necesario ordenar
         if (criterio=="peso" or criterio == "id" or criterio == "cantidad_paquetes" or criterio =="valor_mercancia"):
 
             ordenada = None  # La nueva lista ordenada
@@ -133,6 +129,7 @@ class LCSE:
             while actual.siguiente != self.cabeza:
                 actual = actual.siguiente
             self.cola = actual
+            return 1
 
         
         elif criterio == "coordenadas":    
@@ -241,10 +238,9 @@ class LCSE:
             self.cabeza = primer_ordenado
             #hacemos que este último nodo agregado a la lista ya ordenada(anterior cabeza de la lista original) ahora apunte a la cabeza de la lista para cerrar la lista original ordenada
             ultimo_ordenado.siguiente=primer_ordenado
-
-  
+            return 1
         else:
-            print("criterio de busqueda invalido, solo se admiten 'id','peso','cantidad_paquetes','valor_mercancia' o 'coordenadas'")
+            return -1
             
 
     def insertarOrdenado(self, ordenada, nuevo_nodo, criterio):
@@ -305,12 +301,236 @@ class LCSE:
 def distancia(x1,y1,x2,y2):
     return math.sqrt((x2-x1)**2 + (y2-y1)**2)
 
+class NodoRaiz():
+    def __init__(self,data,x,y):
+        self.data=data
+        self.coordenada_x=x
+        self.coordenada_y=y
+        self.hijos_Xpos_YPos=LCSE()
+        self.hijos_Xpos_YNeg=LCSE()
+        self.hijos_XNeg_YPos=LCSE()
+        self.hijos_XNeg_YNeg=LCSE()   
+
+class Tree():
+    def __init__(self,raiz):
+        self.raiz=raiz
+        self.rutas=["Xpositivo YPositivo","Xpositivo YNegativo","XNegativo YPositivo","XNegativo YNegativo"]
+
+    def agregarNodo(self,peso,id=None,cantidad_paquetes=None,valor_mercancia=None,coordenada_x=None,coordenada_y=None,nombre=None):
+        if coordenada_x>=0 and coordenada_y>=0:
+            self.raiz.hijos_Xpos_YPos.agregarInicio(peso,id,cantidad_paquetes,valor_mercancia,coordenada_x,coordenada_y,nombre)
+        elif coordenada_x>=0 and coordenada_y<0:
+            self.raiz.hijos_Xpos_YNeg.agregarInicio(peso,id,cantidad_paquetes,valor_mercancia,coordenada_x,coordenada_y,nombre)
+        elif coordenada_x<0 and coordenada_y>=0:
+            self.raiz.hijos_XNeg_YPos.agregarInicio(peso,id,cantidad_paquetes,valor_mercancia,coordenada_x,coordenada_y,nombre)
+        elif coordenada_x<0 and coordenada_y<0:
+            self.raiz.hijos_XNeg_YNeg.agregarInicio(peso,id,cantidad_paquetes,valor_mercancia,coordenada_x,coordenada_y,nombre)
+
+    def peso(self):
+        i=0
+        peso=1
+        contador=self.raiz.hijos_Xpos_YPos.ContarElementos()
+        peso=peso+contador
+        print (f"La ruta {self.rutas[i]} contiene {contador} paradas\n")
+        i=i+1
+        contador=self.raiz.hijos_Xpos_YNeg.ContarElementos()
+        peso=peso+contador
+        print (f"La ruta {self.rutas[i]} contiene {contador} paradas\n")
+        i=i+1
+        contador=self.raiz.hijos_XNeg_YPos.ContarElementos()
+        peso=peso+contador
+        print (f"La ruta {self.rutas[i]} contiene {contador} paradas\n")
+        i=i+1
+        contador=self.raiz.hijos_XNeg_YNeg.ContarElementos()
+        peso=peso+contador
+        print (f"La ruta {self.rutas[i]} contiene {contador} paradas\n")
+
+        print(f"el arbol tiene un peso de {peso}")
+        return peso 
+        
+    def buscar(self,criterio,valor,valor2=None):
+        position=self.raiz.hijos_Xpos_YPos.buscar(criterio,valor,valor2=None)
+        if position>=0:
+            return (0,position)
+        position=self.raiz.hijos_Xpos_YNeg.buscar(criterio,valor,valor2=None)
+        if position>=0:
+            return (1,position)
+        position=self.raiz.hijos_XNeg_YPos.buscar(criterio,valor,valor2=None)
+        if position>=0:
+            return (2,position)
+        position=self.raiz.hijos_XNeg_YNeg.buscar(criterio,valor,valor2=None)
+        if position>=0:
+            return (3,position)
+        return (-1,-1)
+
+    def toString(self):
+        i=0
+        string=""
+        string=string+("\n\n\nRuta"+self.rutas[i]+".\n")
+        string=string+self.raiz.hijos_Xpos_YPos.toString()
+        i=i+1
+        string=string+("\n\n\nRuta"+self.rutas[i]+".\n")
+        string=string+self.raiz.hijos_Xpos_YNeg.toString()
+        i=i+1
+        string=string+("\n\n\nRuta"+self.rutas[i]+".\n")
+        string=string+self.raiz.hijos_XNeg_YPos.toString()
+        i=i+1
+        string=string+("\n\n\nRuta"+self.rutas[i]+".\n")
+        string=string+self.raiz.hijos_XNeg_YNeg.toString()
+        return string
+
+    def insertionSort(self,criterio):
+        i=0
+        rutaOrdena= self.raiz.hijos_Xpos_YPos.insertionSort(criterio)
+        if rutaOrdena<0:
+            print("criterio de ordenamiento invalido, solo se admiten 'id','peso','cantidad_paquetes','valor_mercancia' o 'coordenadas'")
+        else:
+            i=i+1
+            self.raiz.hijos_Xpos_YNeg.insertionSort(criterio)
+            i=i+1
+            self.raiz.hijos_XNeg_YPos.insertionSort(criterio)
+            i=i+1
+            self.raiz.hijos_XNeg_YNeg.insertionSort(criterio)
+
+
+    def visualizarRuta(self):
+            plt.figure(figsize=(8,6))
+            
+            def aux(list,colour):
+                x_coords, y_coords, id = [], [], []
+                x_coords.append(self.raiz.coordenada_x)
+                y_coords.append(self.raiz.coordenada_y)
+                id.append(self.raiz.data)
+                actual=list.cabeza
+                i=0
+                while actual !=list.cabeza or i==0:
+                    i=i+1
+                    x_coords.append(actual.coordenada_x)
+                    y_coords.append(actual.coordenada_y)
+                    id.append(actual.nombre)
+                    actual = actual.siguiente
+                plt.plot(x_coords, y_coords, marker='o', linestyle='-', color=colour)
+                for i, label in enumerate(id):
+                    plt.annotate(f"{label}", (x_coords[i], y_coords[i]), textcoords="offset points", xytext=(0,10), ha='center')
+
+                   
+            route=self.raiz.hijos_Xpos_YPos
+            aux(route,"b")
+            route=self.raiz.hijos_Xpos_YNeg
+            aux(route,"g")
+            route=self.raiz.hijos_XNeg_YPos
+            aux(route,"r")
+            route=self.raiz.hijos_XNeg_YNeg
+            aux(route,"m")
+
+
+            plt.title("Distribuidora De Medicamentos E Insumos Hospitalarios Ltda\nVisualizacion de las Rutas")
+            plt.xlabel("Coordenada X")
+            plt.ylabel("Coordenada Y")
+            plt.grid(True)
+            plt.show()
+
+
+        
+
+class NodoRaiz2():
+    def __init__(self,data,x,y):
+        self.data=data
+        self.coordenada_x=x
+        self.coordenada_y=y
+        self.hijos2=[ (hijos_Xpos_YPos:=LCSE()) , (hijos_Xpos_YNeg:=LCSE()) , (hijos_XNeg_YPos:=LCSE()) , (hijos_XNeg_YNeg:=LCSE()) ]
+
+class Tree2():
+    def __init__(self,raiz):
+        self.raiz=raiz
+        self.rutas=["Xpositivo YPositivo","Xpositivo YNegativo","XNegativo YPositivo","XNegativo YNegativo"]
+
+
+    def agregarNodo(self,peso,id=None,cantidad_paquetes=None,valor_mercancia=None,coordenada_x=None,coordenada_y=None,nombre=None):
+        if coordenada_x>=0 and coordenada_y>=0:
+            self.raiz.hijos2[0].agregarInicio(peso,id,cantidad_paquetes,valor_mercancia,coordenada_x,coordenada_y,nombre)
+        elif coordenada_x>=0 and coordenada_y<0:
+            self.raiz.hijos2[1].agregarInicio(peso,id,cantidad_paquetes,valor_mercancia,coordenada_x,coordenada_y,nombre)
+        elif coordenada_x<0 and coordenada_y>=0:
+            self.raiz.hijos2[2].agregarInicio(peso,id,cantidad_paquetes,valor_mercancia,coordenada_x,coordenada_y,nombre)
+        elif coordenada_x<0 and coordenada_y<0:
+            self.raiz.hijos2[3].agregarInicio(peso,id,cantidad_paquetes,valor_mercancia,coordenada_x,coordenada_y,nombre)
+
+    def peso(self):
+        i=0
+        peso=1
+        for hijo in self.raiz.hijos2:
+            contador=hijo.ContarElementos()
+            peso=peso+contador
+            print (f"La ruta {self.rutas[i]} contiene {contador} paradas\n")
+            i=i+1
+        print(f"el arbol tiene un peso de {peso}")
+        return peso 
+        
+
+    def buscar(self,criterio,valor,valor2=None):
+        i=0
+        for hijo in self.raiz.hijos2:
+            position=hijo.buscar(criterio,valor,valor2=None)
+            if position>0:
+                return (i,position)
+            i=i+1
+        return (-1,-1)
+
+    def toString(self):
+        i=0
+        string=""
+        for hijo in self.raiz.hijos2:
+            string=string+("\n\n\nRuta"+self.rutas[i]+".\n")
+            string=string+hijo.toString()
+            i=i+1
+        return string
+
+    def insertionSort(self,criterio):
+        for hijo in self.raiz.hijos2:
+            rutaOrdena=hijo.insertionSort(criterio)
+            if rutaOrdena<0:
+                print("criterio de ordenamiento invalido, solo se admiten 'id','peso','cantidad_paquetes','valor_mercancia' o 'coordenadas'")
+                return -1
+
+    def visualizarRuta(self):
+        plt.figure(figsize=(8,6))
+        
+        colours=["b","g","r","m"]
+        j=0
+        for route in self.raiz.hijos2:
+            x_coords, y_coords, id = [], [], []
+            x_coords.append(self.raiz.coordenada_x)
+            y_coords.append(self.raiz.coordenada_y)
+            id.append(self.raiz.data)
+            actual=route.cabeza
+            i=0
+            while actual !=route.cabeza or i==0:
+                i=i+1
+                x_coords.append(actual.coordenada_x)
+                y_coords.append(actual.coordenada_y)
+                id.append(actual.nombre)
+                actual = actual.siguiente
+            plt.plot(x_coords, y_coords, marker='o', linestyle='-', color=colours[j])
+            for i, label in enumerate(id):
+                plt.annotate(f"{label}", (x_coords[i], y_coords[i]), textcoords="offset points", xytext=(0,10), ha='center')
+
+        plt.title("Distribuidora De Medicamentos E Insumos Hospitalarios Ltda\nVisualizacion de las Rutas")
+        plt.xlabel("Coordenada X")
+        plt.ylabel("Coordenada Y")
+        plt.grid(True)
+        plt.show()
+
+raiz1=NodoRaiz("Distribuidora",0,0)
+raiz2=NodoRaiz2("Distribuidora",0,0)
+arbol1=Tree(raiz1)
+arbol2=Tree2(raiz2)
+
 class Demo ():
     def __init__(self):
         print("test")
-    def test():
+    def test(arbol):
         print("Inicializando prueba de la clase demo:")
-        lista = LCSE()
         i = 0
         stay=True
         while(stay):
@@ -332,50 +552,57 @@ class Demo ():
             print("Se crea un sistema de rutas con 15 entradas de prueba\n")
             while i<15:
                 i=i+1
-                lista.agregarInicio(random.randint(1,10),random.randint(1,1000),random.randint(1,5),random.randint(1,200000),random.randint(-20,20),random.randint(-20,20),f"Farmacia{i}")
+                arbol.agregarNodo(random.randint(1,10),random.randint(1,1000),random.randint(1,5),random.randint(1,200000),random.randint(-20,20),random.randint(-20,20),f"Farmacia{i}")
         else:
             print("Se crea un sistema de rutas con 10 entradas de prueba reales\n")
 
             
-            lista.agregarInicio(random.randint(1,10),random.randint(1,1000),random.randint(1,5),random.randint(1,200000),165.59,-281.63,"Clinica Bucaramanga")
-            lista.agregarInicio(random.randint(1,10),random.randint(1,1000),random.randint(1,5),random.randint(1,200000),-50.58,-471.17,"Clinica Chicamocha")
-            lista.agregarInicio(random.randint(1,10),random.randint(1,1000),random.randint(1,5),random.randint(1,200000),196.66,242.43,"Drogueria Colsubsidio")
-            lista.agregarInicio(random.randint(1,10),random.randint(1,1000),random.randint(1,5),random.randint(1,200000),-250.1,-116.22,"Farmatodo")
-            lista.agregarInicio(random.randint(1,10),random.randint(1,1000),random.randint(1,5),random.randint(1,200000),-436.03,607.43,"Farmacia La rebaja")
-            lista.agregarInicio(random.randint(1,10),random.randint(1,1000),random.randint(1,5),random.randint(1,200000),360.21,795.22,"Drogueria Alemana")
-            lista.agregarInicio(random.randint(1,10),random.randint(1,1000),random.randint(1,5),random.randint(1,200000),-483.81,303.81,"Clinica San Luis")
-            lista.agregarInicio(random.randint(1,10),random.randint(1,1000),random.randint(1,5),random.randint(1,200000),-239.04,833.36,"Drogueria Ahorremas")
-            lista.agregarInicio(random.randint(1,10),random.randint(1,1000),random.randint(1,5),random.randint(1,200000),271.23,47.15,"Cruz verde")
-            lista.agregarInicio(random.randint(1,10),random.randint(1,1000),random.randint(1,5),random.randint(1,200000),25.06,-360.52,"Drogas Paguealcosto")
-        lista.ContarElementos()
-        print(lista.toString())
-        lista.insertionSort("peso")
-        print("\nRuta ordenada por peso\n")
-        print(lista.toString())
+            arbol.agregarNodo(random.randint(1,10),random.randint(1,1000),random.randint(1,5),random.randint(1,200000),165.59,-281.63,"Clinica Bucaramanga")
+            arbol.agregarNodo(random.randint(1,10),random.randint(1,1000),random.randint(1,5),random.randint(1,200000),-50.58,-471.17,"Clinica Chicamocha")
+            arbol.agregarNodo(random.randint(1,10),random.randint(1,1000),random.randint(1,5),random.randint(1,200000),196.66,242.43,"Drogueria Colsubsidio")
+            arbol.agregarNodo(random.randint(1,10),random.randint(1,1000),random.randint(1,5),random.randint(1,200000),-250.1,-116.22,"Farmatodo")
+            arbol.agregarNodo(random.randint(1,10),random.randint(1,1000),random.randint(1,5),random.randint(1,200000),-436.03,607.43,"Farmacia La rebaja")
+            arbol.agregarNodo(random.randint(1,10),random.randint(1,1000),random.randint(1,5),random.randint(1,200000),360.21,795.22,"Drogueria Alemana")
+            arbol.agregarNodo(random.randint(1,10),random.randint(1,1000),random.randint(1,5),random.randint(1,200000),-483.81,303.81,"Clinica San Luis")
+            arbol.agregarNodo(random.randint(1,10),random.randint(1,1000),random.randint(1,5),random.randint(1,200000),-239.04,833.36,"Drogueria Ahorremas")
+            arbol.agregarNodo(random.randint(1,10),random.randint(1,1000),random.randint(1,5),random.randint(1,200000),271.23,47.15,"Cruz verde")
+            arbol.agregarNodo(random.randint(1,10),random.randint(1,1000),random.randint(1,5),random.randint(1,200000),25.06,-360.52,"Drogas Paguealcosto")
+        arbol.peso()
+        print(arbol.toString())
+        arbol.insertionSort("peso")
+        print("\nRutas ordenada por peso\n")
+        print(arbol.toString())
 
-        lista.insertionSort("valor_mercancia")
-        print("\nRuta ordenada por el valor de la mercancia\n")
-        print(lista.toString())
+        arbol.insertionSort("valor_mercancia")
+        print("\nRutas ordenada por el valor de la mercancia\n")
+        print(arbol.toString())
 
-        lista.insertionSort("coordenadas")
-        print("\nRuta ordenada por distancia\n")
-        print("Es la ruta mas corta posible")
-        print(lista.toString())
+        arbol.insertionSort("coordenadas")
+        print("\nRutas ordenada por distancia\n")
+        print(arbol.toString())
+
+        def printencontrado(encontrado):
+            if encontrado[0]<1:
+                print("elemento no encontrado")
+            else:
+                print(f"elememto encontrado en la ruta {arbol.rutas[encontrado[0]]} posicion {encontrado[1]}")
 
         print("Buscando un envio con peso 3")
-        lista.buscar("peso",3)
+        printencontrado( arbol.buscar("peso",3) )
         print("Buscando un envio con coordenadas (2,2)")
-        lista.buscar("coordenadas",2,2)
+        printencontrado( arbol.buscar("coordenadas",2,2))
         print("Buscando un envio con coordenadas (-50.58,-471.17)")
-        lista.buscar("coordenadas",-50.58,-471.17)
+        printencontrado( arbol.buscar("coordenadas",-50.58,-471.17) )
         print("Buscando una farmacia de nombre Farmacia11")
-        lista.buscar("nombre","Farmacia11")      
+        printencontrado( arbol.buscar("nombre","Farmacia11") )      
         print("Buscando una farmacia de nombre Farmatodo")
-        lista.buscar("nombre","Farmatodo")
-        
-        print("\nLa ruta se mostrara ordenada por distancia")
-        lista.visualizarRuta()
+        printencontrado( arbol.buscar("nombre","Farmatodo") )
+
+        print("\nLas rutas se mostraran ordenadas por distancia")
+        arbol.visualizarRuta()
 
         
                 
-Demo.test()
+#Demo.test(arbol1)
+
+#Demo.test(arbol2)
