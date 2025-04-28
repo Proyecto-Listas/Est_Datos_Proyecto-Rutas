@@ -514,6 +514,7 @@ class Tree2():
             plt.plot(x_coords, y_coords, marker='o', linestyle='-', color=colours[j])
             for i, label in enumerate(id):
                 plt.annotate(f"{label}", (x_coords[i], y_coords[i]), textcoords="offset points", xytext=(0,10), ha='center')
+            j=j+1        
 
         plt.title("Distribuidora De Medicamentos E Insumos Hospitalarios Ltda\nVisualizacion de las Rutas")
         plt.xlabel("Coordenada X")
@@ -605,4 +606,4 @@ class Demo ():
                 
 #Demo.test(arbol1)
 
-#Demo.test(arbol2)
+Demo.test(arbol2)
