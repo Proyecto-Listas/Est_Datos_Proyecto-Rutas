@@ -1,10 +1,16 @@
 #Realizado por:
 #Daniver Franchesco Hernandez Acero 2240032
-#Juan Manuel Ni√±o Pi√±a 2240040
+#Juan Manuel Nino Pina 2240040
 #Juan Manuel Rivera Torres 2240046
 #Luis Felipe Rueda Garcia 2240021
 import math, random
 import matplotlib.pyplot as plt
+class Dron:
+    def __init__(self,nombre,peso_maximo,ruta=None):
+        self.nombre=nombre
+        self.peso_maximo=peso_maximo
+        self.ruta=ruta
+        self.id_ruta=None
 class Nodo:
     def __init__(self,peso,id,cantidad_paquetes,valor_mercancia,coordenada_x,coordenada_y,nombre):
         self.peso = peso
@@ -58,6 +64,19 @@ class LCSE:
                 contador += 1
         return contador
 
+    def pesoPaquetes(self):
+        if self.validarVacia():
+            return 0
+        else:
+            contador = 0
+            actual = self.cabeza
+            while True:
+                contador += actual.peso
+                if actual.siguiente == self.cabeza:
+                    break
+                actual = actual.siguiente
+        return contador
+
     
     def toString(self):
         if self.validarVacia():
@@ -104,7 +123,7 @@ class LCSE:
 
     def insertionSort(self,criterio):
         if self.validarVacia() or self.cabeza.siguiente == self.cabeza:
-            return 0 # Si la lista est√° vac√≠a o tiene un solo elemento, no es necesario ordenar
+            return 0 # Si la lista esta vacia o tiene un solo elemento, no es necesario ordenar
         if (criterio=="peso" or criterio == "id" or criterio == "cantidad_paquetes" or criterio =="valor_mercancia"):
 
             ordenada = None  # La nueva lista ordenada
@@ -112,11 +131,11 @@ class LCSE:
             actual = self.cabeza
             while True:
                 siguiente = actual.siguiente
-                if ordenada is None:  # Si la lista ordenada est√° vac√≠a, insertar el primer nodo
+                if ordenada is None:  # Si la lista ordenada esta vacia, insertar el primer nodo
                     ordenada = actual
                     ordenada.siguiente = ordenada  
                 else:
-                    # Insertar el nodo en su posici√≥n correcta en la lista ordenada
+                    # Insertar el nodo en su posicion correcta en la lista ordenada
                     ordenada = self.insertarOrdenado(ordenada, actual,criterio)
                 
                 actual = siguiente
@@ -134,55 +153,55 @@ class LCSE:
         
         elif criterio == "coordenadas":    
             #buscando la cola
-            #actual es el nodo que se est√° examinando en cada recorrido, empezamos desde la cabeza
+            #actual es el nodo que se esta examinando en cada recorrido, empezamos desde la cabeza
             actual =self.cabeza
             #mientras que el nodo siguente al nodo actual sea diferente de la cabeza, es decir mientras el nodo actual no sea la cola
             while actual.siguiente != self.cabeza:
                 #guardamos en nuestra apuntador "actual" el nodo siguiente al actual
                 actual=actual.siguiente
-            #si se sali√≥ del bucle el valor de "actual" debe ser la cola de la lista, lo guardamos en la variable "cola"
+            #si se salio del bucle el valor de "actual" debe ser la cola de la lista, lo guardamos en la variable "cola"
             cola = actual
 
-            #variable que almacena el nodo "m√°s cercano" a el √∫ltimo nodo agregado a la ruta ordenada por distancia,pero EL MAS CERCANO ENCONTRADO HASTA EL MOMENTO es decir el nodo que almacena esta variable va cambiando en medio del recorrido seg√∫n se encuentre un nodo m√°s cercano, en este caso guardamos en √©l la cabeza mientras recorremos toda lista comparando hasta que quede uno m√°s cercano que ese
+            #variable que almacena el nodo "mas cercano" a el ultimo nodo agregado a la ruta ordenada por distancia,pero EL MAS CERCANO ENCONTRADO HASTA EL MOMENTO es decir el nodo que almacena esta variable va cambiando en medio del recorrido segun se encuentre un nodo mas cercano, en este caso guardamos en el la cabeza mientras recorremos toda lista comparando hasta que quede uno mas cercano que ese
             mas_cercano = self.cabeza
-            #al mover un nodo de una posici√≥n para no romper la lista circular necesitamos que el anterior a ese nodo apunte a el siguiente de ese nodo, as√≠ cuando "quitemos" un nodo de una posici√≥n la lista no se rompa, por eso nesecitamos esta variable
+            #al mover un nodo de una posicion para no romper la lista circular necesitamos que el anterior a ese nodo apunte a el siguiente de ese nodo, asÌ cuando "quitemos" un nodo de una posicion la lista no se rompa, por eso nesecitamos esta variable
             anterior_al_mas_cercano = cola
 
-            #encontramos el m√°s cercano a la base ( en este caso, coordenadas (0,0))
-            #actual es el nodo que se est√° examinando en cada recorrido, empezamos desde la cabeza
+            #encontramos el mas cercano a la base ( en este caso, coordenadas (0,0))
+            #actual es el nodo que se esta examinando en cada recorrido, empezamos desde la cabeza
             actual =self.cabeza
             #variable cuyo valor aumenta dentro del bucle
             i=0
-            #mientras que "actual" sea diferente de la cabeza (actual es igual a cabeza en la primera iteraci√≥n o cuando ya se recorri√≥ la lista por completo), o cuando i==0, esta segunda condici√≥n s√≥lo ocurre antes de entrar el bucle ya que una vez dentro el valor de i cambia, (esto es para que a pesar de que la primera vez que se axamina "actual" es igual a "cabeza" a√∫n as√≠ entre en el bucle pero la siguiente vez que esto ocurra ya no)
+            #mientras que "actual" sea diferente de la cabeza (actual es igual a cabeza en la primera iteraciÛn o cuando ya se recorrio la lista por completo), o cuando i==0, esta segunda condicion sÛlo ocurre antes de entrar el bucle ya que una vez dentro el valor de i cambia, (esto es para que a pesar de que la primera vez que se axamina "actual" es igual a "cabeza" aun asi entre en el bucle pero la siguiente vez que esto ocurra ya no)
             while actual != self.cabeza or i==0:
                 #cambiamos el valor de i
                 i= i+1
-                #si la distancia entre la base y el nodo siguiente al actual es menor a la distancia entre la base y m√°s cercano encontrado hasta el momento (en la primer iteraci√≥n este m√°s cercano ser√≠a el mismo "actual", por eso empezamos comparando con el siguiente al actual)
+                #si la distancia entre la base y el nodo siguiente al actual es menor a la distancia entre la base y mas cercano encontrado hasta el momento (en la primer iteraciÛn este m·s cercano serÌa el mismo "actual", por eso empezamos comparando con el siguiente al actual)
                 if distancia(self.base_coordenada_x, self.base_coordenada_y,actual.siguiente.coordenada_x,actual.siguiente.coordenada_y) < distancia(self.base_coordenada_x,self.base_coordenada_y,mas_cercano.coordenada_x,mas_cercano.coordenada_y):
-                    #actualizamos que el anterior al m√°s cercano es ahora el actual pues en la comparaci√≥n el siguiente al actual fue el m√°scercano
+                    #actualizamos que el anterior al m·s cercano es ahora el actual pues en la comparaciÛn el siguiente al actual fue el m·scercano
                     anterior_al_mas_cercano = actual
-                    #se actualiza el nodo almacendo en la variable m√°s cercano,
+                    #se actualiza el nodo almacendo en la variable m·s cercano,
                     mas_cercano = actual.siguiente
                 #sin importar si los valores de mascercano y anterioralmascercano se actualizaron o no, en la variable acutal ahora almacenamos el nodo siguiente al guardado en actual
                 actual=actual.siguiente
-            #si se sali√≥ del bucle es porque por segunda vez en nodo guardado en actual es la cabeza, es decir se recorrio toda la lista (sin alterarla)    
+            #si se saliÛ del bucle es porque por segunda vez en nodo guardado en actual es la cabeza, es decir se recorrio toda la lista (sin alterarla)    
             
-            #si el m√°s cercano es la cabeza
+            #si el m·s cercano es la cabeza
             if mas_cercano==self.cabeza:
-                #guardamos como cabeza de la lista al siguiente (como luego vamos a remover al nodo m√°s cercano en este caso la cabeza de la lista, no queremos que self.cabeza a punte a un nodo que no est√° en la lista porque no tendr√≠amos como acceder al resto de nodos de la lista a ordenar)
+                #guardamos como cabeza de la lista al siguiente (como luego vamos a remover al nodo m·s cercano en este caso la cabeza de la lista, no queremos que self.cabeza a punte a un nodo que no est· en la lista porque no tendrÌamos como acceder al resto de nodos de la lista a ordenar)
                 self.cabeza=self.cabeza.siguiente
             #ahora hacemos que el nodo anterior al mascercano apunte al siguiente al nodo mascercano (para poder removerlo el mascercano de la lista sin romperla)
             anterior_al_mas_cercano.siguiente=mas_cercano.siguiente
-            #guardamos en la variable primer_ordenado (la cabeza de la nueva lista ya ordenada) el m√°s cercano
+            #guardamos en la variable primer_ordenado (la cabeza de la nueva lista ya ordenada) el m·s cercano
             primer_ordenado=mas_cercano
-            #guardamos en la variable ultimo_ordenado el m√°s cercano ("ultimo_ordenado" ser√° siempre el √∫ltimo nodo agragado a la nueva lista ya ordenada)
+            #guardamos en la variable ultimo_ordenado el m·s cercano ("ultimo_ordenado" ser· siempre el ˙ltimo nodo agragado a la nueva lista ya ordenada)
             ultimo_ordenado=mas_cercano
-            #cerramos la nueva lista circular haciendo que este nodo al que apunta ultimo_ordenado tenga como .siguiente a s√≠ mismo
+            #cerramos la nueva lista circular haciendo que este nodo al que apunta ultimo_ordenado tenga como .siguiente a sÌ mismo
             ultimo_ordenado.siguiente=ultimo_ordenado
 
-            #ahora encontramos el nodo m√°s cercano al ultimo nodo agregado a la lista ya ordenada, (es deicir la siguiente parada m√°s cercana a la parada actual en una ruta) y lo quitamos de la lista a ordenar, u original, y lo agregamos a la lista ya ordenada
+            #ahora encontramos el nodo m·s cercano al ultimo nodo agregado a la lista ya ordenada, (es deicir la siguiente parada m·s cercana a la parada actual en una ruta) y lo quitamos de la lista a ordenar, u original, y lo agregamos a la lista ya ordenada
 
-            #mientras que el siguiente a la cabeza sea diferete a la cabeza, es decir la lista a ordenar se haya vaciado y s√≥lo que un nodo por odernar
+            #mientras que el siguiente a la cabeza sea diferete a la cabeza, es decir la lista a ordenar se haya vaciado y sÛlo que un nodo por odernar
             while self.cabeza.siguiente!=self.cabeza:
 
 
@@ -192,51 +211,51 @@ class LCSE:
                 while actual.siguiente != self.cabeza:
                     #guardamos en nuestra apuntador "actual" el nodo siguiente al actual
                     actual=actual.siguiente
-                #si se sali√≥ del bucle el valor de "actual" debe ser la cola de la lista, lo guardamos en la variable "cola"
+                #si se saliÛ del bucle el valor de "actual" debe ser la cola de la lista, lo guardamos en la variable "cola"
                 cola = actual
 
-                #restauramos las valores de actual y m√°scercano para que sean la cabeza y empezar a recorrerla lista otra vez
+                #restauramos las valores de actual y m·scercano para que sean la cabeza y empezar a recorrerla lista otra vez
                 actual=self.cabeza
                 mas_cercano=actual
                 #restauramos el valor de anterior al mas cercano para que sea la cola
                 anterior_al_mas_cercano = cola
-                #volvemos a darle el valor de 0 a i para que se pueda ingresar en el siguiente bucle interno, a√∫n con actual siendo igual a cabeza
+                #volvemos a darle el valor de 0 a i para que se pueda ingresar en el siguiente bucle interno, a˙n con actual siendo igual a cabeza
                 i=0
-                #mientras que "actual" sea diferente de la cabeza (actual es igual a cabeza en la primera iteraci√≥n o cuando ya se recorri√≥ la lista por completo), o cuando i==0, esta segunda condici√≥n s√≥lo ocurre antes de entrar el bucle ya que una vez dentro el valor de i cambia, (esto es para que a pesar de que la primera vez que se axamina "actual" es igual a "cabeza" a√∫n as√≠ entre en el bucle pero la siguiente vez que esto ocurra ya no)
+                #mientras que "actual" sea diferente de la cabeza (actual es igual a cabeza en la primera iteraciÛn o cuando ya se recorriÛ la lista por completo), o cuando i==0, esta segunda condiciÛn sÛlo ocurre antes de entrar el bucle ya que una vez dentro el valor de i cambia, (esto es para que a pesar de que la primera vez que se axamina "actual" es igual a "cabeza" a˙n asÌ entre en el bucle pero la siguiente vez que esto ocurra ya no)
                 while actual != self.cabeza or i==0:
                     #cambiamos el valor de i
                     i=i+1
-                    #si la distancia entre el √∫ltimo nodo agregado a la lista ya ordenada y el nodo siguiente al actual es menor a la distancia entre ultimo_ordenado (el √∫ltimo nodo agregado a la lista ya ordenada) y mas_cercano (el m√°s cercano encontrado hasta el momento), [en la primer iteraci√≥n este m√°s cercano ser√≠a el mismo "actual", por eso empezamos comparando con el siguiente al actual]
+                    #si la distancia entre el ˙ltimo nodo agregado a la lista ya ordenada y el nodo siguiente al actual es menor a la distancia entre ultimo_ordenado (el ˙ltimo nodo agregado a la lista ya ordenada) y mas_cercano (el m·s cercano encontrado hasta el momento), [en la primer iteraciÛn este m·s cercano serÌa el mismo "actual", por eso empezamos comparando con el siguiente al actual]
                     if distancia(ultimo_ordenado.coordenada_x,ultimo_ordenado.coordenada_y, actual.siguiente.coordenada_x,actual.siguiente.coordenada_y) < distancia(ultimo_ordenado.coordenada_x,ultimo_ordenado.coordenada_y,mas_cercano.coordenada_x,mas_cercano.coordenada_y):
-                         #actualizamos que el anterior al m√°s cercano es ahora el actual pues en la comparaci√≥n el siguiente al actual fue el m√°scercano
+                         #actualizamos que el anterior al m·s cercano es ahora el actual pues en la comparaciÛn el siguiente al actual fue el m·scercano
                         anterior_al_mas_cercano = actual
-                        #se actualiza el nodo almacendo en la variable m√°s cercano
+                        #se actualiza el nodo almacendo en la variable m·s cercano
                         mas_cercano = actual.siguiente
                     #sin importar si los valores de mascercano y anterioralmascercano se actualizaron o no, en la variable acutal ahora almacenamos el nodo siguiente al guardado en actual
                     actual=actual.siguiente
-            #si se sali√≥ de este bucle interno es porque por segunda vez en nodo guardado en actual es la cabeza, es decir se recorrio toda la lista (sin alterarla)    
+            #si se saliÛ de este bucle interno es porque por segunda vez en nodo guardado en actual es la cabeza, es decir se recorrio toda la lista (sin alterarla)    
             
-            #si el m√°s cercano es la cabeza
+            #si el m·s cercano es la cabeza
                 if mas_cercano==self.cabeza:
-                    #guardamos como cabeza de la lista al siguiente (como luego vamos a remover al nodo m√°s cercano en este caso la cabeza de la lista, no queremos que self.cabeza a punte a un nodo que no est√° en la lista porque no tendr√≠amos como acceder al resto de nodos de la lista a ordenar)
+                    #guardamos como cabeza de la lista al siguiente (como luego vamos a remover al nodo m·s cercano en este caso la cabeza de la lista, no queremos que self.cabeza a punte a un nodo que no est· en la lista porque no tendrÌamos como acceder al resto de nodos de la lista a ordenar)
                     self.cabeza=self.cabeza.siguiente
 
                 #ahora hacemos que el nodo anterior al mascercano apunte al siguiente al nodo mascercano (para poder removerlo el mascercano de la lista sin romperla)
                 anterior_al_mas_cercano.siguiente=mas_cercano.siguiente
-                #hacemos que el √∫ltimo en la lista ya ordenada apunte al m√°s cercano (as√≠ lo agregamos a la lista ordenada)
+                #hacemos que el ˙ltimo en la lista ya ordenada apunte al m·s cercano (asÌ lo agregamos a la lista ordenada)
                 ultimo_ordenado.siguiente=mas_cercano
-                #ahora el √∫ltimo en la lista ordenada es el m√°s cercano encontrado en la √∫ltima iteraci√≥n
+                #ahora el ˙ltimo en la lista ordenada es el m·s cercano encontrado en la ˙ltima iteraciÛn
                 ultimo_ordenado=mas_cercano
-                #hacemos que el √∫ltimo agregado a la lista ordenada apunte a la cabeza para completar la lista cerrada
+                #hacemos que el ˙ltimo agregado a la lista ordenada apunte a la cabeza para completar la lista cerrada
                 ultimo_ordenado.siguiente=primer_ordenado
 
-            #una vez se sale del ciclo externo la lista a orderar (original) ya  s√≥lo tiene un elemento, la cabeza, agregamos este nodo a la lista ya ordenada, asiendo que el √∫ltimo en la lista ordenada ahora apunte a la cabeza
+            #una vez se sale del ciclo externo la lista a orderar (original) ya  sÛlo tiene un elemento, la cabeza, agregamos este nodo a la lista ya ordenada, asiendo que el ˙ltimo en la lista ordenada ahora apunte a la cabeza
             ultimo_ordenado.siguiente=self.cabeza
-            #ahora el √∫ltimo en la lista ordenada es la cabeza de la lista original
+            #ahora el ˙ltimo en la lista ordenada es la cabeza de la lista original
             ultimo_ordenado=self.cabeza
-            #hacemos que el primer_ordenado (cabeza de la lista ordenada) sea la cabeza de nuestra lista original que ahora estar√° ya ordenada
+            #hacemos que el primer_ordenado (cabeza de la lista ordenada) sea la cabeza de nuestra lista original que ahora estar· ya ordenada
             self.cabeza = primer_ordenado
-            #hacemos que este √∫ltimo nodo agregado a la lista ya ordenada(anterior cabeza de la lista original) ahora apunte a la cabeza de la lista para cerrar la lista original ordenada
+            #hacemos que este ˙ltimo nodo agregado a la lista ya ordenada(anterior cabeza de la lista original) ahora apunte a la cabeza de la lista para cerrar la lista original ordenada
             ultimo_ordenado.siguiente=primer_ordenado
             return 1
         else:
@@ -269,7 +288,7 @@ class LCSE:
             actual = actual.siguiente
             actual_siguiente_atributo=getattr(actual.siguiente,criterio)
 
-        # Insertar el nodo en la posici√≥n adecuada
+        # Insertar el nodo en la posiciÛn adecuada
         nuevo_nodo.siguiente = actual.siguiente
         actual.siguiente = nuevo_nodo
         return ordenada
@@ -443,7 +462,7 @@ class NodoRaiz2():
 class Tree2():
     def __init__(self,raiz):
         self.raiz=raiz
-        self.rutas=["Xpositivo YPositivo","Xpositivo YNegativo","XNegativo YPositivo","XNegativo YNegativo"]
+        self.rutas=["0. Primer cuadrante","1. Cuarto cuadrante","2. Segundo cuadrante","3. Tercer cuadrante"]
 
 
     def agregarNodo(self,peso,id=None,cantidad_paquetes=None,valor_mercancia=None,coordenada_x=None,coordenada_y=None,nombre=None):
@@ -481,7 +500,7 @@ class Tree2():
         i=0
         string=""
         for hijo in self.raiz.hijos2:
-            string=string+("\n\n\nRuta"+self.rutas[i]+".\n")
+            string=string+("\n\n\nRuta "+self.rutas[i]+".\n")
             string=string+hijo.toString()
             i=i+1
         return string
@@ -490,7 +509,7 @@ class Tree2():
         for hijo in self.raiz.hijos2:
             rutaOrdena=hijo.insertionSort(criterio)
             if rutaOrdena<0:
-                print("criterio de ordenamiento invalido, solo se admiten 'id','peso','cantidad_paquetes','valor_mercancia' o 'coordenadas'")
+                print("Criterio de ordenamiento invalido, solo se admiten 'id','peso','cantidad_paquetes','valor_mercancia' o 'coordenadas'")
                 return -1
 
     def visualizarRuta(self):
@@ -535,21 +554,21 @@ class Demo ():
         i = 0
         stay=True
         while(stay):
-            TypeOfSimulation = input("Desea Probar probar con datos generados aleatoriamente o datos reales \nIngrese 1 para datos reales,\n0 para datos generados\n")
+            TypeOfSimulation = input("\nIngrese 0 para probar con datos reales\nIngrese 1 para probar con datos aleatorios\n")
             if TypeOfSimulation.isnumeric():
                 TypeOfSimulation = int(TypeOfSimulation)
-                if TypeOfSimulation==0:
-                    print("Ha elegido la opcion 0 los Datos se generaran aleatoriamente")
+                if TypeOfSimulation==1:
+                    print("Ha elegido la opcion 0, los datos se generaran aleatoriamente")
                     stay=False
-                elif TypeOfSimulation==1:
-                    print("Ha elegido la opcion 1 se usaran los datos reales")
+                elif TypeOfSimulation==0:
+                    print("Ha elegido la opcion 1, se usaran los datos reales")
                     stay=False
             else:
                 print(f"La opcion ingresada solo puede ser 0 o 1.\n {TypeOfSimulation} no es un tipo de opcion valida \n")
         
 
 
-        if TypeOfSimulation==0:
+        if TypeOfSimulation==1:
             print("Se crea un sistema de rutas con 15 entradas de prueba\n")
             while i<15:
                 i=i+1
@@ -605,5 +624,79 @@ class Demo ():
         
                 
 #Demo.test(arbol1)
+drones=[]
+# Demo.test(arbol2)
+print("Bienvenido al sistema de rutas de la distribuidora De Medicamentos E Insumos Hospitalarios Ltda\n")
+menu = "\n------------------------ Menu -----------------------------\nA continuacion, ingrese:\n\n 1. Para agregar una drogueria a la ruta. \n 2. Para ordenar el arbol. \n 3. Para visualizar las rutas \n 4. Para agregar un dron.\n 5. Para asignar ruta a un dron.\n 6. Para mostrar este menu. \n 7. Para salir del programa. \n 8. Para generar demostracion de rutas del sistema.\n-----------------------------------------------------------\n"
+print(menu)
+while True:
+    op=int(input("Su opcion es: "))
+    if op==1:
+        print("\n------------------ Agregar una drogueria ----------------------\n")
+        print("\nSe ha agregado correctamente a la ruta", arbol2.agregarNodo(float(input("Ingrese el peso de la carga: ")),int(input("Ingrese una id para la entrega: ")),int(input("Ingrese la cantidad de paquetes")),int(input("Ingrese un valor para la mercancia: ")),float(input("Ingrese la coordenada x con respecto a la distribuidora: ")),float(input("Ingrese la coordenada y con respecto a la distribuidora: ")),input("Ingrese el nombre de la farmacia: ")))
+        print("---------------------------------------------------------------\n")
+    elif op==2:
+        print("\n--------------------------- Ordenar las rutas -----------------------------\n")
+        eleccion = input("\nA continuacion, ingrese:\n\n 1. Para ordenar por peso.\n 2. Para ordenar por valor de mercancia.\n 3. Para ordenar por distancia.\n\nSu opcion es: ")
+        if eleccion == "1":
+            arbol2.insertionSort("peso")
+            print("El arbol se ha ordenado por peso")
+        elif eleccion == "2":
+            arbol2.insertionSort("valor_mercancia")
+            print("El arbol se ha ordenado por valor de mercancia")
+        elif eleccion == "3":
+            arbol2.insertionSort("coordenadas")
+            print("El arbol se ha ordenado por distancia")
+        else:
+            print("No se ha ejecutado ninguna operacion")
+        print("---------------------------------------------------------------------------\n")
+    elif op==3:
+        print("\n--------------------------- Visualizar las rutas -----------------------------\n")
+        print("\n Visualizando las siguientes rutas :", arbol2.toString())
+        arbol2.visualizarRuta()
+        print("------------------------------------------------------------------------------\n")
+    elif op==4:
+        print("\n--------------------------- Agregar un dron -----------------------------\n")
+        dron = Dron(input("Ingrese el nombre del dron: "),float(input("Ingrese el peso maximo en kg que soporta el dron: ")))
+        drones.append(dron)
+        print(f"Se ha agregado correctamente el dron\n")
+        print("----------------------------------------------------------------------------\n")
+    elif op==5:
+        print("\n----------------------------------------------- Asignar ruta a dron -------------------------------------------------\n")
+        print("Drones actualmente agregados: ")
+        cont=0
+        for dron in drones:
+            cont+=1
+            print(f"{cont}. {dron.nombre}, soporta un maximo de {dron.peso_maximo} kg, y tiene ruta asignada: {dron.id_ruta}")
+        eleccion_dron = int(input("\nElija un dron: "))
+        cont=0
+        for dron in drones:
+            cont+=1
+            if eleccion_dron == cont:
+                dron_selec=dron
+                break
+        print("\nRutas actualmente disponibles:\n",arbol2.toString())
+        while True:
+            eleccion_ruta = int(input("\nElija una ruta: "))
+            if eleccion_ruta > 3:
+                print("Cancelo la operacion, saliendo...")
+                break
+            elif dron_selec.peso_maximo >= arbol2.raiz.hijos2[eleccion_ruta].pesoPaquetes():
+                dron_selec.ruta=arbol2.raiz.hijos2[eleccion_ruta]
+                dron_selec.id_ruta=eleccion_ruta
+                break
+            else:
+                print(f"La ruta de peso {arbol2.raiz.hijos2[eleccion_ruta].pesoPaquetes()} kg excede el peso maximo del dron: {dron_selec.peso_maximo} kg")
+                print("Elija otra ruta o 4 para cancelar")
 
-Demo.test(arbol2)
+        print("--------------------------------------------------------------------------------------------------------------\n")
+    elif op==6:
+        print(menu)
+    elif op==7:
+        print("Gracias por usar el programa\nSaliendo...")
+        break
+    elif op==8:
+        Demo.test(arbol2)
+    else:
+        print("Opcion no valida. Por favor ingresar una de las opciones del menu: ")
+        print(menu)
