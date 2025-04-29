@@ -5,12 +5,12 @@
 #Luis Felipe Rueda Garcia 2240021
 import math, random
 import matplotlib.pyplot as plt
-class Dron:
-    def __init__(self,nombre,peso_maximo,ruta=None):
-        self.nombre=nombre
-        self.peso_maximo=peso_maximo
-        self.ruta=ruta
-        self.id_ruta=None
+# class Dron:
+#     def __init__(self,nombre,peso_maximo,ruta=None):
+#         self.nombre=nombre
+#         self.peso_maximo=peso_maximo
+#         self.ruta=ruta
+#         self.id_ruta=None
 class Nodo:
     def __init__(self,peso,id,cantidad_paquetes,valor_mercancia,coordenada_x,coordenada_y,nombre):
         self.peso = peso
@@ -440,13 +440,17 @@ class Tree():
 
                    
             route=self.raiz.hijos_Xpos_YPos
-            aux(route,"b")
+            if route.cabeza!=None:
+                aux(route,"b")
             route=self.raiz.hijos_Xpos_YNeg
-            aux(route,"g")
+            if route.cabeza!=None:
+                aux(route,"g")
             route=self.raiz.hijos_XNeg_YPos
-            aux(route,"r")
+            if route.cabeza!=None:
+                aux(route,"r")
             route=self.raiz.hijos_XNeg_YNeg
-            aux(route,"m")
+            if route.cabeza!=None:
+                aux(route,"m")
 
 
             plt.title("Distribuidora De Medicamentos E Insumos Hospitalarios Ltda\nVisualizacion de las Rutas")
@@ -533,17 +537,18 @@ class Tree2():
             x_coords.append(self.raiz.coordenada_x)
             y_coords.append(self.raiz.coordenada_y)
             id.append(self.raiz.data)
-            actual=route.cabeza
-            i=0
-            while actual !=route.cabeza or i==0:
-                i=i+1
-                x_coords.append(actual.coordenada_x)
-                y_coords.append(actual.coordenada_y)
-                id.append(actual.nombre)
-                actual = actual.siguiente
-            plt.plot(x_coords, y_coords, marker='o', linestyle='-', color=colours[j])
-            for i, label in enumerate(id):
-                plt.annotate(f"{label}", (x_coords[i], y_coords[i]), textcoords="offset points", xytext=(0,10), ha='center')
+            if route.head!=None:
+                actual=route.cabeza
+                i=0
+                while actual !=route.cabeza or i==0:
+                    i=i+1
+                    x_coords.append(actual.coordenada_x)
+                    y_coords.append(actual.coordenada_y)
+                    id.append(actual.nombre)
+                    actual = actual.siguiente
+                plt.plot(x_coords, y_coords, marker='o', linestyle='-', color=colours[j])
+                for i, label in enumerate(id):
+                    plt.annotate(f"{label}", (x_coords[i], y_coords[i]), textcoords="offset points", xytext=(0,10), ha='center')
             j=j+1        
 
         plt.title("Distribuidora De Medicamentos E Insumos Hospitalarios Ltda\nVisualizacion de las Rutas")
@@ -578,7 +583,7 @@ class Demo ():
                 print(f"La opcion ingresada solo puede ser 0 o 1.\n {TypeOfSimulation} no es un tipo de opcion valida \n")
         
 
-
+        arbol.limpiarArbol()
         if TypeOfSimulation==1:
             print("Se crea un sistema de rutas con 15 entradas de prueba\n")
             while i<15:
@@ -631,18 +636,19 @@ class Demo ():
 
         print("\nLas rutas se mostraran ordenadas por distancia")
         arbol.visualizarRuta()
-        arbol.limpiarArbol()
+        
 
         
                 
 #Demo.test(arbol1)
-drones=[]
+#drones=[]
 # Demo.test(arbol2)
 def MostrarMenu(arbolx):
     print("Bienvenido al sistema de rutas de la distribuidora De Medicamentos E Insumos Hospitalarios Ltda\n")
-    menu = "\n------------------------ Menu -----------------------------\nA continuacion, ingrese:\n\n 1. Para agregar una drogueria a la ruta. \n 2. Para ordenar el arbol. \n 3. Para visualizar las rutas \n 4. Para agregar un dron.\n 5. Para asignar ruta a un dron.\n 6. Para mostrar este menu. \n 7. Para salir del programa. \n 8. Para generar demostracion de rutas del sistema.\n-----------------------------------------------------------\n"
-    print(menu)
+    menu = "\n------------------------ Menu -----------------------------\nA continuacion, ingrese:\n\n 1. Para agregar una drogueria a la ruta. \n 2. Para ordenar el arbol. \n 3. Para visualizar las rutas \n 4.  Para salir del programa. \n 5. Para generar demostracion de rutas del sistema.\n-----------------------------------------------------------\n"
+#Para agregar un dron.\n 5. Para asignar ruta a un dron.\n 6. Para mostrar este menu. \n 7.
     while True:
+        print(menu)
         op=int(input("Su opcion es: "))
         if op==1:
             print("\n------------------ Agregar una drogueria ----------------------\n")
@@ -654,12 +660,15 @@ def MostrarMenu(arbolx):
             if eleccion == "1":
                 arbolx.insertionSort("peso")
                 print("El arbol se ha ordenado por peso")
+                print(arbolx.toString())
             elif eleccion == "2":
                 arbolx.insertionSort("valor_mercancia")
                 print("El arbol se ha ordenado por valor de mercancia")
+                print(arbolx.toString())
             elif eleccion == "3":
                 arbolx.insertionSort("coordenadas")
                 print("El arbol se ha ordenado por distancia")
+                print(arbolx.toString())
             else:
                 print("No se ha ejecutado ninguna operacion")
             print("---------------------------------------------------------------------------\n")
@@ -668,47 +677,47 @@ def MostrarMenu(arbolx):
             print("\n Visualizando las siguientes rutas :", arbolx.toString())
             arbolx.visualizarRuta()
             print("------------------------------------------------------------------------------\n")
-        elif op==4:
-            print("\n--------------------------- Agregar un dron -----------------------------\n")
-            dron = Dron(input("Ingrese el nombre del dron: "),float(input("Ingrese el peso maximo en kg que soporta el dron: ")))
-            drones.append(dron)
-            print(f"Se ha agregado correctamente el dron\n")
-            print("----------------------------------------------------------------------------\n")
-        elif op==5:
-            print("\n----------------------------------------------- Asignar ruta a dron -------------------------------------------------\n")
-            print("Drones actualmente agregados: ")
-            cont=0
-            for dron in drones:
-                cont+=1
-                print(f"{cont}. {dron.nombre}, soporta un maximo de {dron.peso_maximo} kg, y tiene ruta asignada: {dron.id_ruta}")
-            eleccion_dron = int(input("\nElija un dron: "))
-            cont=0
-            for dron in drones:
-                cont+=1
-                if eleccion_dron == cont:
-                    dron_selec=dron
-                    break
-            print("\nRutas actualmente disponibles:\n",arbolx.toString())
-            while True:
-                eleccion_ruta = int(input("\nElija una ruta: "))
-                if eleccion_ruta > 3:
-                    print("Cancelo la operacion, saliendo...")
-                    break
-                elif dron_selec.peso_maximo >= arbolx.raiz.hijos2[eleccion_ruta].pesoPaquetes():
-                    dron_selec.ruta=arbolx.raiz.hijos2[eleccion_ruta]
-                    dron_selec.id_ruta=eleccion_ruta
-                    break
-                else:
-                    print(f"La ruta de peso {arbolx.raiz.hijos2[eleccion_ruta].pesoPaquetes()} kg excede el peso maximo del dron: {dron_selec.peso_maximo} kg")
-                    print("Elija otra ruta o 4 para cancelar")
+        # elif op==4:
+        #     print("\n--------------------------- Agregar un dron -----------------------------\n")
+        #     dron = Dron(input("Ingrese el nombre del dron: "),float(input("Ingrese el peso maximo en kg que soporta el dron: ")))
+        #     drones.append(dron)
+        #     print(f"Se ha agregado correctamente el dron\n")
+        #     print("----------------------------------------------------------------------------\n")
+        # elif op==5:
+        #     print("\n----------------------------------------------- Asignar ruta a dron -------------------------------------------------\n")
+        #     print("Drones actualmente agregados: ")
+        #     cont=0
+        #     for dron in drones:
+        #         cont+=1
+        #         print(f"{cont}. {dron.nombre}, soporta un maximo de {dron.peso_maximo} kg, y tiene ruta asignada: {dron.id_ruta}")
+        #     eleccion_dron = int(input("\nElija un dron: "))
+        #     cont=0
+        #     for dron in drones:
+        #         cont+=1
+        #         if eleccion_dron == cont:
+        #             dron_selec=dron
+        #             break
+        #     print("\nRutas actualmente disponibles:\n",arbolx.toString())
+        #     while True:
+        #         eleccion_ruta = int(input("\nElija una ruta: "))
+        #         if eleccion_ruta > 3:
+        #             print("Cancelo la operacion, saliendo...")
+        #             break
+        #         elif dron_selec.peso_maximo >= arbolx.raiz.hijos2[eleccion_ruta].pesoPaquetes():
+        #             dron_selec.ruta=arbolx.raiz.hijos2[eleccion_ruta]
+        #             dron_selec.id_ruta=eleccion_ruta
+        #             break
+        #         else:
+        #             print(f"La ruta de peso {arbolx.raiz.hijos2[eleccion_ruta].pesoPaquetes()} kg excede el peso maximo del dron: {dron_selec.peso_maximo} kg")
+        #             print("Elija otra ruta o 4 para cancelar")
 
-            print("--------------------------------------------------------------------------------------------------------------\n")
-        elif op==6:
-            print(menu)
-        elif op==7:
+        #     print("--------------------------------------------------------------------------------------------------------------\n")
+        #elif op==6:
+        #    print(menu)
+        elif op==4:
             print("Gracias por usar el programa\nSaliendo...")
             break
-        elif op==8:
+        elif op==5:
             Demo.test(arbolx)
         else:
             print("Opcion no valida. Por favor ingresar una de las opciones del menu: ")
