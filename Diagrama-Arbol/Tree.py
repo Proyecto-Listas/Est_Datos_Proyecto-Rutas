@@ -537,7 +537,7 @@ class Tree2():
             x_coords.append(self.raiz.coordenada_x)
             y_coords.append(self.raiz.coordenada_y)
             id.append(self.raiz.data)
-            if route.head!=None:
+            if route.cabeza!=None:
                 actual=route.cabeza
                 i=0
                 while actual !=route.cabeza or i==0:
@@ -723,4 +723,4 @@ def MostrarMenu(arbolx):
             print("Opcion no valida. Por favor ingresar una de las opciones del menu: ")
             print(menu)
 
-MostrarMenu(arbol1)
+MostrarMenu(arbol2)
