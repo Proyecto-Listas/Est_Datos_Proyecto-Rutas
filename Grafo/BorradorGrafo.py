@@ -111,6 +111,23 @@ class Graph:
         plt.grid(True)
         plt.show()
 
+    def plot_full_graph(self):
+        fig, ax = plt.subplots()
+        for (u, v) in self.edges:
+            ax.plot([u.x, v.x], [u.y, v.y], color='lightgray', linewidth=0.5)
+        ax.scatter([n.x for n in self.vertices if n.has_order],
+                   [n.y for n in self.vertices if n.has_order], s=50, label='Activo')
+        ax.scatter([n.x for n in self.vertices if not n.has_order],
+                   [n.y for n in self.vertices if not n.has_order], s=50, label='Inactivo', alpha=0.3)
+        for n in self.vertices:
+            ax.text(n.x, n.y, n.id)
+        ax.set_title('Grafo Completo')
+        ax.set_xlabel('Coordenada X')
+        ax.set_ylabel('Coordenada Y')
+        ax.legend()
+        plt.grid(True)
+        plt.show()
+
 if __name__ == "__main__":
     nodes = []
     base = Node("0", 0, 0, has_order=False)
@@ -123,6 +140,8 @@ if __name__ == "__main__":
     g = Graph(nodes)
     start = base
 
+    g.plot_full_graph()
+
     tour = g.nearest_neighbor(start)
     length = g.tour_length(tour)
     print('Inicial:', [n.id for n in tour], length)
@@ -134,5 +153,5 @@ if __name__ == "__main__":
 
     new_tour = g.adjust_route(tour, cancelled, start)
     new_length = g.tour_length(new_tour)
-    print('Ajustado:', new_tour, new_length)
+    print('Ajustado:', [n.id for n in new_tour], new_length)
     g.plot_tour(new_tour, title_suffix=' (ajustada)')
