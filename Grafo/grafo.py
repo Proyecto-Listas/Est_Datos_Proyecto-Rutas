@@ -102,7 +102,7 @@ class Graph:
             max_weight: float | None = None,
             max_distance: float | None = None,
             max_deliveries: int | None = None,
-            max_edge_distance: float | None = None   # ← NUEVO PARÁMETRO
+            max_edge_distance: float | None = None  
         ):
         sub_tours      = []
         current_sub    = [tour[0]]         # Siempre arrancamos en la base
@@ -113,7 +113,7 @@ class Graph:
             u, v = tour[i-1], tour[i]
             w    = self.get_weight(u, v)
 
-            # --- ¿rompe alguna restricción si añadimos 'v'? ------------------
+            
             violates = (
                 (max_edge_distance is not None and w > max_edge_distance) or
                 (max_weight is not None     and current_weight + w > max_weight) or
@@ -127,7 +127,6 @@ class Graph:
                 # cerramos la sub-ruta regresando a la base
                 current_sub.append(tour[0])
                 sub_tours.append(current_sub)
-
                 # Si el nodo que rompe la condición es la propia base,
                 # simplemente reiniciamos el acumulador y seguimos.
                 if v is tour[0]:
@@ -135,19 +134,14 @@ class Graph:
                     current_weight = 0.0
                     delivery_cnt   = 0
                     continue
-
-                # Empezamos nueva sub-ruta con base y 'v'
                 current_sub    = [tour[0], v]
                 current_weight = self.get_weight(tour[0], v)
                 delivery_cnt   = 1 if v.has_order else 0
             else:
-                # seguimos en la misma sub-ruta
                 current_sub.append(v)
                 current_weight += w
                 if v.has_order:
                     delivery_cnt += 1
-
-        # Cerramos la última sub-ruta si hace falta
         if current_sub[-1] is not tour[0]:
             current_sub.append(tour[0])
         sub_tours.append(current_sub)
@@ -195,7 +189,7 @@ class Graph:
         plt.show()
 
 if __name__ == "__main__":
-    # Crear nodos: la base y otros nodos de entrega
+    
     nodes = []
     base = Node("0", 0, 0, has_order=False)
     nodes.append(base)
@@ -203,26 +197,19 @@ if __name__ == "__main__":
         x = random.randint(-20, 20)
         y = random.randint(-20, 20)
         nodes.append(Node(str(i), x, y))
-    
-    # Construir el grafo completo
     g = Graph(nodes)
     start = base
-    
-    # Visualizar el grafo completo
     g.plot_full_graph()
-    
     # Generar una ruta usando el algoritmo del vecino más cercano
     tour = g.nearest_neighbor(start)
     length = g.tour_length(tour)
     print('Ruta inicial:', [n.id for n in tour], 'Longitud:', length)
     g.plot_tour(tour)
     
-    # Simular la cancelación de una orden
     cancelled = random.choice([n for n in nodes if n != base])
     cancelled.has_order = False
     print('Cancelado:', cancelled.id)
-    
-    # Ajustar la ruta quitando el nodo cancelado
+
     new_tour = g.adjust_route(tour, cancelled, start)
     new_length = g.tour_length(new_tour)
     print('Ruta ajustada:', [n.id for n in new_tour], 'Longitud:', new_length)
@@ -233,7 +220,7 @@ if __name__ == "__main__":
     tour,
     max_weight=40,
     max_deliveries=4,
-    max_edge_distance=45  
+    max_edge_distance=45  #AQUI FRANCHESCO PUEDE PONER ESO COMO VARIABLES Y HACER QUE EL USUARIO LAS MODIFIQUE
 )
     for i, subtour in enumerate(subtours):
         print(f"Subruta {i+1}: {[n.id for n in subtour]}, Longitud: {g.tour_length(subtour)}")
