@@ -1,6 +1,7 @@
 import random
 import math
 import matplotlib.pyplot as plt
+import matplotlib.cm as cm
 
 class Node:
     def __init__(self, id, x, y, has_order=True):
@@ -144,7 +145,8 @@ class Graph:
                     delivery_cnt += 1
         if current_sub[-1] is not tour[0]:
             current_sub.append(tour[0])
-        sub_tours.append(current_sub)
+        if len(current_sub) > 2:
+            sub_tours.append(current_sub)
 
         return sub_tours
 
@@ -187,6 +189,35 @@ class Graph:
         ax.legend()
         plt.grid(True)
         plt.show()
+        
+    def plot_all_subtours(self, subtours, title='Todas las Subrutas'):
+        fig, ax = plt.subplots()
+    # Colores distintos para cada subruta
+        colors = cm.get_cmap('tab10', len(subtours))
+    
+    # Puntos activos e inactivos
+        ax.scatter([n.x for n in self.vertices if n.has_order],
+               [n.y for n in self.vertices if n.has_order],
+               s=50, label='Activo')
+        ax.scatter([n.x for n in self.vertices if not n.has_order],
+               [n.y for n in self.vertices if not n.has_order],
+               s=50, label='Inactivo', alpha=0.3)
+    
+        for n in self.vertices:
+            ax.text(n.x, n.y, n.id)
+    
+    # Dibujar cada subruta con un color distinto
+        for i, tour in enumerate(subtours):
+            xs = [node.x for node in tour]
+            ys = [node.y for node in tour]
+            ax.plot(xs, ys, linestyle='-', marker='o', color=colors(i), label=f'Subruta {i+1}')
+    
+        ax.set_title(title)
+        ax.set_xlabel('Coordenada X')
+        ax.set_ylabel('Coordenada Y')
+        ax.legend()
+        plt.grid(True)
+        plt.show()
 
 if __name__ == "__main__":
     
@@ -219,9 +250,13 @@ if __name__ == "__main__":
     subtours = g.split_tour_by_constraints(
     tour,
     max_weight=40,
+    max_distance=None,
     max_deliveries=4,
-    max_edge_distance=45  #AQUI FRANCHESCO PUEDE PONER ESO COMO VARIABLES Y HACER QUE EL USUARIO LAS MODIFIQUE
+    max_edge_distance=None  #AQUI FRANCHESCO PUEDE PONER ESO COMO VARIABLES Y HACER QUE EL USUARIO LAS MODIFIQUE
 )
+    
     for i, subtour in enumerate(subtours):
         print(f"Subruta {i+1}: {[n.id for n in subtour]}, Longitud: {g.tour_length(subtour)}")
         g.plot_tour(subtour, title_suffix=f" (Subruta {i+1})")
+        
+    g.plot_all_subtours(subtours, title='Subrutas del Dron')
