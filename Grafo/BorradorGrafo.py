@@ -1,18 +1,44 @@
+#Realizado por:
+#Daniver Franchesco Hernandez Acero 2240032
+#Juan Manuel Nino Pina 2240040
+#Juan Manuel Rivera Torres 2240046
+#Luis Felipe Rueda Garcia 2240021
+from operator import contains
 import random
 import math
+from xml.etree.ElementTree import tostring
 import matplotlib.pyplot as plt
+class Dron:
+    def __init__(self,nombre,peso_maximo,ruta=None):
+        self.nombre=nombre
+        self.peso_maximo=peso_maximo
+        self.ruta=ruta
+        self.id_ruta=None
 
 class Node:
-    def __init__(self, id, x, y, package_weight=1.0, has_order=True):
+    def __init__(self, id, x, y, package_weight=1.0, has_order=True, cantidad_paquetes=None, valor_mercancia=None, nombre=None):
         self.id = id
+        self.nombre = nombre
         self.x = x
         self.y = y
         self.package_weight = package_weight
         self.has_order = has_order
+        self.cantidad_paquetes = cantidad_paquetes
+        self.valor_mercancia = valor_mercancia
+    def __str__(self):
+        return self.toString()
+    def __repr__(self):
+        return self.toString()
     def __hash__(self):
         return hash(self.id)
     def __eq__(self, other):
         return isinstance(other, Node) and self.id == other.id
+    def toString(self):
+        nombre = self.nombre if self.nombre is not None else "N/A"
+        cantidad = self.cantidad_paquetes if self.cantidad_paquetes is not None else 0
+        valor = self.valor_mercancia if self.valor_mercancia is not None else 0
+        peso = self.package_weight if self.package_weight is not None else 0.0
+        return f"{self.id:3} | {nombre:21} | {peso:9.6f} | {cantidad:8} | {valor:7} | ({self.x},{self.y})"
 
 class Graph:
     def __init__(self, vertices=None):
@@ -21,6 +47,15 @@ class Graph:
         self.weight = set()
         if vertices:
             self._build_full_graph()
+
+    def toString(self, route):
+        if not route or len(route) == 0:
+            return "-1"
+        output = "ID  | Nombre                | Peso (kg) | Paquetes |  Valor  | Coordenadas"
+        for node in route:
+            output += "\n" + node.toString()
+        return output
+
 
     def _build_full_graph(self):
         self.edges.clear()
@@ -75,9 +110,6 @@ class Graph:
     def tour_length(self, tour):
         total = 0
         for i in range(len(tour) - 1):
-            print(i)
-            print(tour[i])
-            print(tour[i+1])
             total += self.get_weight(tour[i], tour[i+1])
         return total
 
@@ -111,7 +143,7 @@ class Graph:
         ax.scatter([n.x for n in self.vertices if not n.has_order],
                    [n.y for n in self.vertices if not n.has_order], s=50, label='Inactivo', alpha=0.3)
         for n in self.vertices:
-            ax.text(n.x, n.y, n.id)
+            ax.text(n.x, n.y, n.nombre if n.nombre else n.id)
         ax.plot(xs, ys, linestyle='-', marker='o', label='Ruta')
         ax.set_title(f'Ruta del Dron (NN){title_suffix}')
         ax.set_xlabel('Coordenada X')
@@ -203,13 +235,18 @@ class Graph:
         ax.scatter([n.x for n in self.vertices if not n.has_order],
                    [n.y for n in self.vertices if not n.has_order], s=50, label='Inactivo', alpha=0.3)
         for n in self.vertices:
-            ax.text(n.x, n.y, n.id)
+            ax.text(n.x, n.y, n.nombre if n.nombre else n.id)
         ax.set_title('Grafo Completo')
         ax.set_xlabel('Coordenada X')
         ax.set_ylabel('Coordenada Y')
         ax.legend()
         plt.grid(True)
         plt.show()
+    def toStringFullGraph(self):
+        output = "ID  | Nombre                | Peso (kg) | Paquetes |  Valor  | Coordenadas"
+        for node in self.vertices:
+            output += "\n" + node.toString()
+        return output
 
     def plot_route(self, route, title):
         tour = route['tour']
@@ -221,7 +258,7 @@ class Graph:
         ax.scatter([n.x for n in self.vertices if not n.has_order],
                    [n.y for n in self.vertices if not n.has_order], s=50, label='Inactivo', alpha=0.3)
         for n in self.vertices:
-            ax.text(n.x, n.y, n.id)
+            ax.text(n.x, n.y, n.nombre if n.nombre else n.id)
         ax.plot(xs, ys, linestyle='-', marker='o', label=title)
         ax.set_title(title)
         ax.set_xlabel('X')
@@ -238,7 +275,7 @@ class Graph:
         ax.scatter([n.x for n in self.vertices if not n.has_order],
                    [n.y for n in self.vertices if not n.has_order], s=50, label='Inactivo', alpha=0.3)
         for n in self.vertices:
-            ax.text(n.x, n.y, n.id)
+            ax.text(n.x, n.y, n.nombre if n.nombre else n.id)
         for idx, r in enumerate(routes):
             tour = r['tour']
             xs = [node.x for node in tour]
@@ -252,39 +289,262 @@ class Graph:
         plt.show()
 
 if __name__ == "__main__":
+    drones = []
     nodes = []
     base = Node("0", 0, 0, has_order=False)
-    nodes.append(base)
-    for i in range(1, 15):
-        x = random.randint(-20, 20)
-        y = random.randint(-20, 20)
-        nodes.append(Node(str(i), x, y, package_weight=random.uniform(1,2)))
 
-    g = Graph(nodes)
-    start = base
+    print("Bienvenido al sistema de rutas de la distribuidora De Medicamentos E Insumos Hospitalarios Ltda\n")
+    menu = """
+    ------------------------ Menú -----------------------------
+    A continuación, ingrese:
+    
+    1. Para agregar un nodo a la lista.
+    2. Para generar un nuevo grafo.
+    3. Para generar las subrutas según criterios.
+    4. Para visualizar las rutas.
+    5. Para agregar un dron.
+    6. Para asignar ruta a un dron.
+    7. Para mostrar este menú.
+    8. Para salir del programa.
+    9. Para generar demostración de rutas del sistema.
+    -------------------------------------------------------------
+    """
+    print(menu)
 
-    g.plot_full_graph()
+    while True:
+        op = int(input("Su opción es: "))
 
-    tour = g.nearest_neighbor(start)
-    length = g.tour_length(tour)
-    print('Inicial:', [n.id for n in tour], length)
-    g.plot_tour(tour)
+        if op == 1:
+            print("\n------------------ Agregar un nodo ----------------------\n")
+            id = input("Ingrese la ID del nodo: ")
+            x = float(input("Ingrese la coordenada x: "))
+            y = float(input("Ingrese la coordenada y: "))
+            peso = float(input("Ingrese el peso del pedido: "))
+            volumen = float(input("Ingrese la cantidad de paquetes del pedido: "))
+            valor = int(input("Ingrese el valor del pedido: "))
+            nombre = input("Ingrese el nombre de la droguería: ")
+            nodes.append(Node(id, x, y, package_weight=peso, has_order=True, cantidad_paquetes=volumen, valor_mercancia=valor, nombre=nombre))
+            print("Nodo agregado exitosamente.\n")
+            print("--------------------------------------------------------\n")
 
-    cancelled = random.choice([n for n in nodes if n != base])
-    cancelled.has_order = False
-    print('Cancelado:', cancelled.id)
+        elif op == 2:
+            print("\n------------------ Generar nuevo grafo ------------------\n")
+            if len(nodes) > 1:
+                if not contains(nodes,base):
+                    nodes.append(base)
+                g = None
+                g = Graph(nodes)
+                start = base
+                print(g.toStringFullGraph())
+                g.plot_full_graph()
+                tour = g.nearest_neighbor(start)
+                length = g.tour_length(tour)
+                print('Inicial:', [n.id for n in tour], length)
+                print(f"\n\n{g.toString(tour)}")
+                g.plot_tour(tour)
 
-    new_tour = g.adjust_route(tour, cancelled, start)
-    print(new_tour)
-    for node in new_tour:
-        print(node.id)
-    new_length = g.tour_length(new_tour)
-    print('Ajustado:', [n.id for n in new_tour], new_length)
-    g.plot_tour(new_tour, title_suffix=' (ajustada)')
+                cancelled = random.choice([n for n in nodes if n != base])
+                cancelled.has_order = False
+                print('Cancelado:', cancelled.id)
 
-    routes = g.plan_routes(start, max_distance=200, max_weight=10, max_volume=5)
-    for idx, r in enumerate(routes,1):
-        print(f"Ruta {idx}: {[n.id for n in r['tour']]} distancia={r['distance']:.1f} peso={r['weight']:.1f} vol={r['volume']}")
-        g.plot_route(r, title=f"Ruta {idx}")
+                new_tour = g.adjust_route(tour, cancelled, start)
+                new_length = g.tour_length(new_tour)
+                print('Ajustado:', [n.id for n in new_tour], new_length)
+                g.plot_tour(new_tour, title_suffix=' (ajustada)')
+                print(f"\n\n{g.toString(new_tour)}")
+                print("--------------------------------------------------------\n")
+            else:
+                print("Por favor, primero agregue otro nodo al grafo")
+                print("--------------------------------------------------------\n")
+        elif op == 3:
+            print("\n----------- Generar subrutas según criterios -----------\n")
+            while True:
+                try:
+                    max_distance=input("Distancia máxima por ruta (enter para sin límite): ")
+                    max_distance = None if max_distance.strip() == "" else float(max_distance)
+                    max_distance_to_origin = max((n.x**2 + n.y**2)**0.5 for n in nodes)
+                    if max_distance is not None:
+                        if max_distance < max_distance_to_origin:
+                            print(f"No es posible generar subrutas con una distancia entre nodos menor a la distancia máxima entre nodos, usando el menor valor posible: {max_distance_to_origin+1}")
+                            max_distance = max_distance_to_origin+1
+                    peso_max = input("Peso máximo por ruta (enter para sin límite): ")
+                    peso_max = None if peso_max.strip() == "" else float(peso_max)
+                    max_package_weight = max(n.package_weight for n in nodes)
+                    if peso_max is not None:
+                        if peso_max < max_package_weight:
+                            print(f"No es posible generar subrutas con un peso menor al máximo de algún nodo, usando el menor valor posible: {max_package_weight+1}")
+                            peso_max = max_package_weight+1
+                    vol_max = input("Cantidad de nodos máxima por ruta (enter para sin límite): ")
+                    vol_max = None if vol_max.strip() == "" else float(vol_max)
 
-    g.plot_all_routes(routes)
+
+
+                
+                    routes = g.plan_routes(start, max_distance=max_distance, max_weight=peso_max, max_volume=vol_max)
+                    if routes is None:
+                        print("Criterios no válidos, intente de nuevo.\n")
+                        continue
+                    break
+                except ValueError:
+                    print("Entrada inválida. Intente de nuevo.\n")
+        
+            print("Subrutas generadas:\n")
+            for idx, r in enumerate(routes,1):
+                print(f"Ruta {idx}: {[n.id for n in r['tour']]} distancia={r['distance']:.1f} peso={r['weight']:.1f} vol={r['volume']}")
+                print(f"\n\n{g.toString(r['tour'])}")
+                g.plot_route(r, title=f"Ruta {idx}")
+
+            g.plot_all_routes(routes)
+            print("--------------------------------------------------------\n")
+
+        elif op == 4:
+            print("\n------------------ Visualizar rutas ------------------\n")
+            g.plot_full_graph()
+            for idx, r in enumerate(routes,1):
+                print(f"Ruta {idx}: {[n.id for n in r['tour']]} distancia={r['distance']:.1f} peso={r['weight']:.1f} vol={r['volume']}")
+                print(f"\n\n{g.toString(r['tour'])}")
+                g.plot_route(r, title=f"Ruta {idx}")
+
+            g.plot_all_routes(routes)
+            print("-----------------------------------------------------\n")
+
+        elif op == 5:
+            print("\n------------------ Agregar dron ------------------\n")
+            nombre = input("Nombre del dron: ")
+            peso_max = float(input("Peso máximo soportado (kg): "))
+            dron = Dron(nombre, peso_max)
+            drones.append(dron)
+            print("Dron agregado exitosamente.\n")
+
+        elif op == 6:
+            print("\n-------------- Asignar ruta a dron --------------\n")
+            if not routes:
+                print("No hay rutas disponibles. Genere rutas primero.\n")
+                continue
+
+            print("Drones disponibles:")
+            for i, dron in enumerate(drones, 1):
+                print(f"{i}. {dron.nombre} (peso máximo: {dron.peso_maximo} kg, ruta asignada: {dron.id_ruta})")
+
+            idx_dron = int(input("Seleccione el número de dron: ")) - 1
+            if not (0 <= idx_dron < len(drones)):
+                print("Opción inválida.\n")
+                continue
+            dron = drones[idx_dron]
+
+            for i, r in enumerate(routes, 1):
+                print(f"{i}. Ruta con peso total {r['weight']:.1f} kg")
+
+            idx_ruta = int(input("Seleccione el número de ruta: ")) - 1
+            if not (0 <= idx_ruta < len(routes)):
+                print("Opción inválida.\n")
+                continue
+
+            if routes[idx_ruta]['weight'] > dron.peso_maximo:
+                print("La ruta excede el peso máximo del dron.\n")
+            else:
+                dron.ruta=routes[idx_ruta]
+                dron.id_ruta=idx_ruta+1
+                print("Ruta asignada exitosamente.\n")
+        elif op==7:
+            print(menu)
+        elif op==8:
+            print("Gracias por usar el programa\nSaliendo...")
+            break
+        elif op==9:
+            print("Inicializando prueba de la clase demo:")
+            i = 0
+            stay=True
+            while(stay):
+                TypeOfSimulation = input("\nIngrese 0 para probar con datos reales\nIngrese 1 para probar con datos aleatorios\n\nSu eleccion: ")
+                if TypeOfSimulation.isnumeric():
+                    TypeOfSimulation = int(TypeOfSimulation)
+                    if TypeOfSimulation==1:
+                        print("Ha elegido la opcion 0, los datos se generaran aleatoriamente")
+                        stay=False
+                    elif TypeOfSimulation==0:
+                        print("Ha elegido la opcion 1, se usaran los datos reales")
+                        stay=False
+                else:
+                    print(f"La opcion ingresada solo puede ser 0 o 1.\n {TypeOfSimulation} no es un tipo de opcion valida \n")
+            if TypeOfSimulation==1:
+                print("Se crea un sistema de rutas con 15 entradas de prueba\n")
+                nodes = None
+                nodes = []
+                if not contains(nodes,base):
+                    nodes.append(base)
+                for i in range(1, 15):
+                    x = random.randint(-20, 20)
+                    y = random.randint(-20, 20)
+                    nodes.append(Node(str(i), x, y, package_weight=random.uniform(1,2), has_order=True, cantidad_paquetes=random.randint(1,20), valor_mercancia=random.randint(100,10000)*100, nombre=f"Farmaceutica{i}"))
+                g = None
+                g = Graph(nodes)
+                start = base
+                print(g.toStringFullGraph())
+                g.plot_full_graph()
+                tour = g.nearest_neighbor(start)
+                length = g.tour_length(tour)
+                print('Inicial:', [n.id for n in tour], length)
+                print(f"\n\n{g.toString(tour)}")
+                g.plot_tour(tour)
+
+                cancelled = random.choice([n for n in nodes if n != base])
+                cancelled.has_order = False
+                print('Cancelado:', cancelled.id)
+
+                new_tour = g.adjust_route(tour, cancelled, start)
+                new_length = g.tour_length(new_tour)
+                print('Ajustado:', [n.id for n in new_tour], new_length)
+                g.plot_tour(new_tour, title_suffix=' (ajustada)')
+                print(f"\n\n{g.toString(new_tour)}")
+
+                routes = g.plan_routes(start, max_distance=None, max_weight=15, max_volume=None)
+                for idx, r in enumerate(routes,1):
+                    print(f"Ruta {idx}: {[n.id for n in r['tour']]} distancia={r['distance']:.1f} peso={r['weight']:.1f} vol={r['volume']}")
+                    print(f"\n\n{g.toString(r['tour'])}")
+                    g.plot_route(r, title=f"Ruta {idx}")
+
+                g.plot_all_routes(routes)
+            else:
+                print("Se crea un sistema de rutas con 10 entradas de prueba reales\n")
+                nodes = None
+                nodes = []
+                if not contains(nodes,base):
+                    nodes.append(base)
+                nodes.append(Node("1",165.59,-281.63,package_weight=random.uniform(1,2),has_order=True,cantidad_paquetes=random.randint(1,20),valor_mercancia=random.randint(100,10000)*100,nombre="Clinica Bucaramanga"))
+                nodes.append(Node("2",-50.58,-471.17,package_weight=random.uniform(1,2),has_order=True,cantidad_paquetes=random.randint(1,20),valor_mercancia=random.randint(100,10000)*100,nombre="Clinica Chicamocha"))
+                nodes.append(Node("3",196.66,242.43,package_weight=random.uniform(1,2),has_order=True,cantidad_paquetes=random.randint(1,20),valor_mercancia=random.randint(100,10000)*100,nombre="Drogueria Colsubsidio"))
+                nodes.append(Node("4",-250.1,-116.22,package_weight=random.uniform(1,2),has_order=True,cantidad_paquetes=random.randint(1,20),valor_mercancia=random.randint(100,10000)*100,nombre="Farmatodo"))
+                nodes.append(Node("5",-436.03,607.43,package_weight=random.uniform(1,2),has_order=True,cantidad_paquetes=random.randint(1,20),valor_mercancia=random.randint(100,10000)*100,nombre="Farmacia La rebaja"))
+                nodes.append(Node("6",360.21,795.22,package_weight=random.uniform(1,2),has_order=True,cantidad_paquetes=random.randint(1,20),valor_mercancia=random.randint(100,10000)*100,nombre="Drogueria Alemana"))
+                nodes.append(Node("7",-483.81,303.81,package_weight=random.uniform(1,2),has_order=True,cantidad_paquetes=random.randint(1,20),valor_mercancia=random.randint(100,10000)*100,nombre="Clinica San Luis"))
+                nodes.append(Node("8",-239.04,833.36,package_weight=random.uniform(1,2),has_order=True,cantidad_paquetes=random.randint(1,20),valor_mercancia=random.randint(100,10000)*100,nombre="Drogueria Ahorremas"))
+                nodes.append(Node("9",271.23,47.15,package_weight=random.uniform(1,2),has_order=True,cantidad_paquetes=random.randint(1,20),valor_mercancia=random.randint(100,10000)*100,nombre="Cruz verde"))
+                nodes.append(Node("10",25.06,-360.52,package_weight=random.uniform(1,2),has_order=True,cantidad_paquetes=random.randint(1,20),valor_mercancia=random.randint(100,10000)*100,nombre="Drogas Paguealcosto"))
+                g = Graph(nodes)
+                start = base
+                print(g.toStringFullGraph())
+                g.plot_full_graph()
+                tour = g.nearest_neighbor(start)
+                length = g.tour_length(tour)
+                print('Inicial:', [n.id for n in tour], length)
+                print(f"\n\n{g.toString(tour)}")
+                g.plot_tour(tour)
+
+                cancelled = random.choice([n for n in nodes if n != base])
+                cancelled.has_order = False
+                print('Cancelado:', cancelled.id)
+
+                new_tour = g.adjust_route(tour, cancelled, start)
+                new_length = g.tour_length(new_tour)
+                print('Ajustado:', [n.id for n in new_tour], new_length)
+                g.plot_tour(new_tour, title_suffix=' (ajustada)')
+                print(f"\n\n{g.toString(new_tour)}")
+
+                routes = g.plan_routes(start, max_distance=None, max_weight=5, max_volume=None)
+                for idx, r in enumerate(routes,1):
+                    print(f"Ruta {idx}: {[n.id for n in r['tour']]} distancia={r['distance']:.1f} peso={r['weight']:.1f} vol={r['volume']}")
+                    print(f"\n\n{g.toString(r['tour'])}")
+                    g.plot_route(r, title=f"Ruta {idx}")
+
+                g.plot_all_routes(routes)
