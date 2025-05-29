@@ -29,4 +29,4 @@ Se hizo el cambio de centrar el origen de los drones en (0,0), y tomar los 4 cua
 4. Implementación con Grafos: [https://github.com/Proyecto-Listas/Est_Datos_Proyecto-Rutas/tree/main/Diagrama-Arbol](https://github.com/Proyecto-Listas/Est_Datos_Proyecto-Rutas/tree/main/Grafo)
 Se tomo el problema en su totalidad, y cada punto de entrega se conecta con todos los demas puntos y con el origen de los drones, así se pueden evaluar todas las posibles rutas con cualquier criterio de selección. Se definió que puede haber mútiples drones, y pueden ser asignados a distintas rutas.
 
-![Grafico de la ruta con Grafos](/Grafo/map.png)
+![Grafico de la ruta con Grafos](/Grafo/demo.jpg)
