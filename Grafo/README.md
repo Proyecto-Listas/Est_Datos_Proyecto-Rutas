@@ -95,7 +95,23 @@ adjust_route:Este método recalcula la ruta  entrega del dron en caso de que se 
 Ya al final, se encuentra un menú interactivo , (User Interface)que permite utilizar el programa. Cuenta con las opciones de Agregar Nodo, paragenerar un nuevo grafo (crear un objeto clase Graph si hay al menos dos nodos),  generar subruta por criterios como distancia maxima a recorrer o peso maximo,  Visualizar rutas usa matplotlib.pyplot para graficar las rutas generadas, Agregar un dron agrega un dron, Asignar ruta al dron para indicar que camina va a tomar, Mostrar menu, y salir del programa. Hay una ultima opcion que es una Demo
 
 
+### La Demo, Interfaz gráfica de la ruta y Prueba con datos reales
+La opcion 9 del menu es para ejecutar un escenario de prueba, y se puede realizar con datos aleatorios o con un set de datos reales de Bucaramanga. Si se eligen reales, usa 10 droguerías reales con coordenadas específicas. Si se elige aleatorio: genera 15 nodos con posiciones y pedidos aleatorios. Luego, hace una demostraión del funcionamiento de los métodos para crear el grafo, hacer la ruta ineficiente de vecinos más cercanos, cancela un pedido, reajusta la ruta, generasubrutas con un peso máximo, y muestra y grafica las subrutas.
 
+Las clínicas utilizadas para la ruta son:
+- Clínica Bucaramanga
+- Clínica Chicamocha
+- Clínica San Luis
+- 
+Las Farmacias utilizadas en la ruta son:
+- Farmatodo
+- Drogas La Rebaja
+- Droguería Colsubsidio
+- Cruz Verde
+- Drogas paguealcosto
+- Drogas Ahorramás
+- Droguería Alemana
 
+![Grafico del Grafo completo dado por el programas](/Grafo/image1.jpg)
 
-![Grafico de la demo con Datos Reales](/Grafo/demo.jpg)
+![Grafico de la demo con Datos Reales en Google Maps](/Grafo/demo.jpg)
