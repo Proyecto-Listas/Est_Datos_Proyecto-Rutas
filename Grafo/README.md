@@ -112,6 +112,9 @@ Las Farmacias utilizadas en la ruta son:
 - Drogas Ahorramás
 - Droguería Alemana
 
-![Grafico del Grafo completo dado por el programas](/Grafo/demo.jpg)
+![Grafico del Grafo completo dado por el programa](/Grafo/demo.jpg)
+
+![Grafico de todas las rutas con Datos Reales ](/Grafo/fullruta.png)
 
 ![Grafico de la demo con Datos Reales en Google Maps](/Grafo/map.png)
+
