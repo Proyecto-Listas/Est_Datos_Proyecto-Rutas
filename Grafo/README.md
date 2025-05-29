@@ -1,1 +1,54 @@
-## Nombres
+### Mayorista Farmacéutica
+# Sistema de Optimización de Rutas
+
+**Juan Niño 2240040. Daniver Hernandez 2240032. Luis Rueda 2240021. Juan Rivera 2240046**
+
+### Problema
+Una mayorista farmacéutica con alta demanda necesita distribuir medicamentos y otros insumos críticos de forma rápida y eficiente a hospitales, clínicas y farmacias. Ante la necesidad de minimizar tiempos de entrega, reducir el consumo energético y responder a imprevistos (como cambios de demanda o condiciones climáticas adversas), se opta por utilizar un dron que realice entregas automáticas.
+
+La mayorista tiene una base de datos con todas las zonas de entrega, y de acuerdo con los criterios seleccionados la ruta se crea. Los criterios son las características del paquete y se definen más adelante.
+
+ El dron están programados para realizar una sola ruta semanal, en la que recorre la ciudad, yendo a cada punto de entrega en su base de datos que cumpla las condiciones, y entrega el paquete de farmacéuticos correspondiente. El dron recorre su ruta, ordenando las entregas para que sean geograficamente cercanas entre sí, de tal forma que se optimice el camino. La cantidad de entregas depende completamente de los criterios de selección y necesidades del cliente.
+
+El problema a resolver consiste en planificar y optimizar las rutas de vuelo de dron,, garantizando que cada entrega se realice en el menor tiempo y con el menor recorrido posible. Esto no solo permite mejorar la eficiencia logística, sino que también asegura la entrega oportuna de productos esenciales para la salud de la población.
+
+### Puesta en Contexto de Grafos y Nodos
+La estructura de datos Grafos es usada para representar todos los caminos que puede tomar el dron en su ruta de entrega. Así pues, el Nodo del Grafo representa cada punto al que el dron debe llevar un paquete, y todos los nodos están interconectados entre sí, incluyendo la base de donde sale el dron. Como todos los nodos se conectan el uno con el otro, hay que establecer un orden para que se recorra la ruta, iniciando desde la base (origen) del dron y terminando ahí también. En un plano de coordenadas xy, tomando los cuatro cuadrantes, existe un nodo origen en x=0,y=0 que es de donde parte el dron,, es decir,  es la base de operaciones, y tiene dos vértices y dos vecinos, por uno de ellos sale a recorrer la ruta, y por el otro llega luego de completar la última entrega.
+
+El tipo de Grafo es: *No dirigido y Etiquetado*. Es etiquetado ya que se define con multiples características, aunque no se muestren en las graficas. De acuerdo al contexto, este tipo ofrece varios beneficios y ventajas estratégicas, como:
+- Bidireccionalidad: El grafo no dirigido permite que se recorra la arista en cualquier dirección.. Esto facilita el calculo de las rutas posibles del dron, ya que no discrimina si puede o no tomar un camino hacia otro nodo por su dirección, al poder recorrerlo en ambas direcciones simplemente se tomara la más adecuada.
+
+- Optimización Natural: Al ser etiquetados, cada nodo posee las caracteristicas generales, y esto permite el calculo de distancias entre nodos, pesos de carga en las rutas, se pueden aplicar algoritmos para encontrar la ruta más corta, la más ligera, o la de mayor valor, optimizando así los viajes del dron.
+
+- Reducción de Complejidad: Ser etiquetado y no dirigido permite agregar o quitar nodos (puntos de entrega) fácilmente, sin alterar la estructura general del modelo. Además, ss útil para adaptarse rápidamente a cambios en la demanda, nuevas zonas de entrega o condiciones adversas, lo que mejora la resiliencia logística
+
+### Librerías
+- Math: Esta librería proporciona funciones matemáticas estándar (como las que encuentras en una calculadora científica). Más que todo se usa math.sqrt() para sacar el valor de la raiz cuadrado, es decir, la distancia.
+- Random: Permite trabajar con generación de números aleatorios y selección aleatoria de elementos.  En la demo del repositorio del proyecto, se utiliza para generar las zonas de entrega, nodos.
+
+- matplotlib.pyplot as plt: Es parte de la librería Matplotlib, utilizada para graficar datos en Python. Se importa generalmente como plt por convención. Se utiliza para crear la gráfica (plot) del grafo en el plano, es decir, visualizar las rutas.
+
+- matplotlib.cm as cm: Es parte de la librería Matplotlib, utilizada para manejar mapas de color en Python. Se importa generalmente como cm por convención. Se utiliza para dar colores l la a gráfica (plot) del grafo en el plano, y poder dar un color diferente a cada uno de los subgrafos y rutas diferentes.
+	
+### La clase Dron
+El dron es la clase que define las limitaciones preestablecidas para las entregas. Es el que recorre la ruta, y se crea desde el menu de opciones de usuario, donde puede definirse sus características limitantes.
+
+El dron almacena los siguientes datos 
+- Nombre del dron
+- El peso máximo que puede soportar. Es decir, la cantidad de paquetes que podrá llevar de acuerdo al peso de cada uno de ellos
+- La ruta, osea, el nodo a recorrer.
+- Un identificador de la ruta actual por la que irá el dron
+
+### La clase Nodo
+El nodo es fundamental porque encapsula toda la información necesaria para que el dron pueda realizar la entrega de manera precisa y segura. Al representar cada parada como un nodo, se facilita el cálculo de distancias, la optimización de la secuencia de entregas y la capacidad de adaptación ante cambios en la operación (por ejemplo, reordenar paradas según la prioridad o condiciones del entorno).
+
+Aparte de los parámetros, el nodo posee un método toString para retornar toda la información en una cadena de texto.
+
+Cada nodo almacena los siguientes datos 
+- Nombre de la farmaceútica:
+- Identificador (ID) de la entrega (Código de tres números)
+- La cantidad de paquetes que va a recibir el sitio
+- Valor económico total de los paquetes a entregar
+Posición x del punto de entrega (Coordenadas del punto de entrega)
+- Posición y (Coordenadas del punto de entrega)
+- Referencias a todos los otros puntos de entrega introducidos en el programa
