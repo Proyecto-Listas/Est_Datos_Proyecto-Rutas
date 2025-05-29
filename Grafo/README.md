@@ -114,4 +114,4 @@ Las Farmacias utilizadas en la ruta son:
 
 ![Grafico del Grafo completo dado por el programas](/Grafo/demo.jpg)
 
-![Grafico de la demo con Datos Reales en Google Maps](/Grafo/map.jpg)
+![Grafico de la demo con Datos Reales en Google Maps](/Grafo/map.png)
